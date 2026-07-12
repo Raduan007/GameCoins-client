@@ -74,7 +74,6 @@ export const GameSchema = new Schema<IGame>(
   }
 );
 
-GameSchema.index({ slug: 1 });
 GameSchema.index({ category: 1 });
 GameSchema.index({ isPopular: -1 });
 GameSchema.index({ isFeatured: -1 });
