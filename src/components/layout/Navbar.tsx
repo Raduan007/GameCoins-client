@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTheme } from "@/components/ui/ThemeProvider";
 import { useAuth } from "@/context/AuthContext";
@@ -9,8 +9,14 @@ import { Avatar, Button } from "@heroui/react";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { user, isAuthenticated, logout } = useAuth();
+
+  // Only show theme-dependent UI after client mount to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const navLinks = [
     { label: "Games", href: "/#popular-games" },
@@ -48,13 +54,17 @@ export default function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden items-center gap-3 md:flex">
-            {/* Theme Toggle */}
+            {/* Theme Toggle — uses fallback icon until mounted to prevent hydration mismatch */}
             <button
               onClick={toggleTheme}
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-text-muted transition-colors hover:bg-surface-light hover:text-white cursor-pointer"
               aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
             >
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {mounted ? (
+                theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />
+              ) : (
+                <Sun className="h-4 w-4" />
+              )}
             </button>
 
             {isAuthenticated ? (
@@ -104,13 +114,17 @@ export default function Navbar() {
 
           {/* Mobile Actions */}
           <div className="flex items-center gap-2 md:hidden">
-            {/* Theme Toggle */}
+            {/* Theme Toggle — uses fallback icon until mounted to prevent hydration mismatch */}
             <button
               onClick={toggleTheme}
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-text-muted transition-colors hover:bg-surface-light hover:text-white cursor-pointer"
               aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
             >
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {mounted ? (
+                theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />
+              ) : (
+                <Sun className="h-4 w-4" />
+              )}
             </button>
 
             {/* Mobile Menu Button */}

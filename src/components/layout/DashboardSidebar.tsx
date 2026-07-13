@@ -16,6 +16,9 @@ import {
   ShoppingBag,
   CreditCard,
   Heart,
+  Package,
+  BarChart3,
+  MessageSquare,
 } from "lucide-react";
 import { Avatar, Button } from "@heroui/react";
 
@@ -28,7 +31,7 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
-  const menuItems = [
+  const buyerMenuItems = [
     {
       label: "Overview",
       href: "/dashboard/buyer",
@@ -65,6 +68,47 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
       icon: Home,
     },
   ];
+
+  const sellerMenuItems = [
+    {
+      label: "Overview",
+      href: "/dashboard/seller",
+      icon: LayoutDashboard,
+    },
+    {
+      label: "Products",
+      href: "/dashboard/seller/products",
+      icon: Package,
+    },
+    {
+      label: "Orders",
+      href: "/dashboard/seller/orders",
+      icon: ShoppingBag,
+    },
+    {
+      label: "Analytics",
+      href: "/dashboard/seller/analytics",
+      icon: BarChart3,
+    },
+    {
+      label: "Messages",
+      href: "/dashboard/seller/messages",
+      icon: MessageSquare,
+    },
+    {
+      label: "Browse Games",
+      href: "/#popular-games",
+      icon: Gamepad2,
+    },
+    {
+      label: "Home Page",
+      href: "/",
+      icon: Home,
+    },
+  ];
+
+  const menuItems = user?.role === "seller" ? sellerMenuItems : buyerMenuItems;
+
 
   return (
     <>

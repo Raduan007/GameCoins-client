@@ -81,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("gamecoins_user", JSON.stringify(data.user));
       setToken(data.token);
       setUser(data.user);
-      router.push("/dashboard");
+      // Navigation handled by the LoginPage useEffect watching isAuthenticated
     } catch (error) {
       setUser(null);
       setToken(null);
@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       await authService.register(name, email, password);
-      router.push("/login");
+      // Navigation handled by the RegisterPage after this promise resolves
     } catch (error) {
       throw error;
     } finally {

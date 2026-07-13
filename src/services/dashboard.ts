@@ -38,4 +38,8 @@ export const dashboardService = {
   async updateBuyerProfile(name: string): Promise<any> {
     return api.patch<any>("/api/dashboard/profile", { name });
   },
+  async getSellerOverview(): Promise<any> {
+    return api.get<any>("/api/dashboard/seller/overview");
+  },
 };
+

@@ -11,18 +11,20 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-function getInitialTheme(): Theme {
-  if (typeof window !== "undefined") {
-    const stored = localStorage.getItem("gamecoins-theme") as Theme | null;
-    if (stored === "light" || stored === "dark") return stored;
-  }
-  return "dark";
-}
-
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  // Always start with "dark" — matches what the server renders (no localStorage on server).
+  // The real preference is restored from localStorage in the useEffect below, after hydration.
+  const [theme, setTheme] = useState<Theme>("dark");
 
-  // Sync DOM class with theme
+  // After mount: restore saved theme preference from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem("gamecoins-theme") as Theme | null;
+    if (stored === "light" || stored === "dark") {
+      setTheme(stored);
+    }
+  }, []);
+
+  // Sync DOM class with theme whenever it changes
   useEffect(() => {
     document.documentElement.classList.toggle("light", theme === "light");
   }, [theme]);

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTheme } from "@/components/ui/ThemeProvider";
 import { useAuth } from "@/context/AuthContext";
@@ -14,6 +14,12 @@ interface DashboardNavbarProps {
 export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  // Only show theme-dependent UI after client mount to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border/40 bg-surface/80 px-6 backdrop-blur-lg lg:px-8">
@@ -36,13 +42,17 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
 
       {/* Right side: Actions */}
       <div className="flex items-center gap-3">
-        {/* Theme Toggle */}
+        {/* Theme Toggle — uses fallback icon until mounted to prevent hydration mismatch */}
         <button
           onClick={toggleTheme}
           className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-text-muted transition-colors hover:bg-surface-light hover:text-white cursor-pointer"
           aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
         >
-          {theme === "dark" ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />}
+          {mounted ? (
+            theme === "dark" ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />
+          ) : (
+            <Sun className="h-4.5 w-4.5" />
+          )}
         </button>
 
         {/* User Info & Quick Action */}
