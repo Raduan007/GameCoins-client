@@ -55,8 +55,7 @@ export default function GameDetailsPage() {
     }
   }, [slug]);
 
-  const handlePlaceOrder = async (e) => {
-    e.preventDefault();
+  const handlePlaceOrder = async () => {
     if (!isAuthenticated) {
       toast.error("Please log in to complete your purchase.");
       router.push(`/login?redirect=/games/${slug}`);
@@ -151,7 +150,7 @@ export default function GameDetailsPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#0a0a0f] text-white pt-24 pb-20 relative">
+      <main className="min-h-screen bg-[#0a0a0f] text-white pt-24 pb-32 relative">
         {/* Glow Effects */}
         <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
@@ -332,12 +331,11 @@ export default function GameDetailsPage() {
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-xs text-primary font-bold">3</span>
                     Choose Payment Method
                   </h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-3 gap-4">
                     {[
                       { id: "bkash", name: "bKash Wallet" },
                       { id: "nagad", name: "Nagad Wallet" },
-                      { id: "sslcommerz", name: "Card / Bank" },
-                      { id: "cod", name: "Cash on Delivery" }
+                      { id: "sslcommerz", name: "Card / Bank" }
                     ].map((method) => {
                       const isSelected = paymentMethod === method.id;
                       return (
