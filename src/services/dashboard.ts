@@ -86,5 +86,18 @@ export const dashboardService = {
   async getAdminOverview(): Promise<any> {
     return api.get<any>("/api/dashboard/admin/overview");
   },
+  async getAdminUsers(params: Record<string, string | number>): Promise<any> {
+    const query = new URLSearchParams(params as any).toString();
+    return api.get<any>(`/api/dashboard/admin/users?${query}`);
+  },
+  async getAdminUser(id: string): Promise<any> {
+    return api.get<any>(`/api/dashboard/admin/users/${id}`);
+  },
+  async updateAdminUserRole(id: string, role: string): Promise<any> {
+    return api.patch<any>(`/api/dashboard/admin/users/${id}/role`, { role });
+  },
+  async updateAdminUserStatus(id: string, isActive: boolean): Promise<any> {
+    return api.patch<any>(`/api/dashboard/admin/users/${id}/status`, { isActive });
+  },
 };
 
