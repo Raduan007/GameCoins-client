@@ -47,5 +47,11 @@ export const dashboardService = {
   async deleteSellerProduct(id: string): Promise<any> {
     return api.delete<any>(`/api/dashboard/seller/products/${id}`);
   },
+  async getGames(): Promise<any[]> {
+    return api.get<any[]>("/api/games");
+  },
+  async createSellerProduct(data: any): Promise<any> {
+    return api.post<any>("/api/dashboard/seller/products", data);
+  },
 };
 
