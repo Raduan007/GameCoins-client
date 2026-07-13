@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Card, CardContent, Button, Avatar, Input } from "@heroui/react";
 import { User, Mail, Shield, ShieldCheck, Edit3, Save, X, Calendar } from "lucide-react";
 
-export default function ProfileCard({ profile, onSave }) {
+export default function ProfileCard({ profile, onSave, mode }) {
   const { name, email, role, isActive, createdAt } = profile;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -55,6 +55,14 @@ export default function ProfileCard({ profile, onSave }) {
     setErrorMsg("");
   };
 
+  const getRoleLabel = (roleStr) => {
+    const lower = roleStr?.toLowerCase();
+    if (lower === "user") return "Buyer";
+    if (lower === "seller") return "Seller";
+    if (lower === "admin") return "Admin";
+    return roleStr || "Gamer";
+  };
+
   return (
     <Card className="border border-border/40 bg-surface/40 backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden max-w-2xl mx-auto">
       <CardContent className="p-8 space-y-8">
@@ -69,7 +77,7 @@ export default function ProfileCard({ profile, onSave }) {
           <h2 className="text-2xl font-black text-white tracking-wide">{name}</h2>
           <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20 capitalize mt-2">
             <Shield className="h-3.5 w-3.5" />
-            {role === "user" ? "Buyer" : role || "Gamer"}
+            {getRoleLabel(role)}
           </span>
         </div>
 
@@ -159,7 +167,7 @@ export default function ProfileCard({ profile, onSave }) {
                 </div>
                 <div>
                   <p className="text-[10px] text-text-dim font-bold uppercase tracking-wider">User Role</p>
-                  <p className="text-sm font-semibold text-white capitalize">{role === "user" ? "buyer" : role}</p>
+                  <p className="text-sm font-semibold text-white">{getRoleLabel(role)}</p>
                 </div>
               </div>
 

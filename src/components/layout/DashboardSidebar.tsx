@@ -96,6 +96,11 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
       icon: MessageSquare,
     },
     {
+      label: "My Profile",
+      href: "/dashboard/seller/profile",
+      icon: User,
+    },
+    {
       label: "Browse Games",
       href: "/#popular-games",
       icon: Gamepad2,

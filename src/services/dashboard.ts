@@ -77,5 +77,11 @@ export const dashboardService = {
   async sendMessage(data: { conversationId: string; message: string }): Promise<any> {
     return api.post<any>("/api/dashboard/seller/messages", data);
   },
+  async getSellerProfile(): Promise<any> {
+    return this.getBuyerProfile();
+  },
+  async updateSellerProfile(name: string): Promise<any> {
+    return this.updateBuyerProfile(name);
+  },
 };
 
