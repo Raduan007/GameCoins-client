@@ -1,16 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { TextField, Label, Input, Button, Card, CardContent } from "@heroui/react";
-import { Eye, EyeOff, Mail, Lock, Gamepad2, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, Gamepad2, ArrowRight, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
-export default function LoginPage() {
+function LoginContent() {
   const { login, isAuthenticated, loading: authLoading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect") || "/dashboard";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,12 +22,12 @@ export default function LoginPage() {
 
   const togglePassword = () => setShowPassword(!showPassword);
 
-  // If already authenticated, redirect to dashboard immediately
+  // If already authenticated, redirect to target path immediately
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/dashboard");
+      router.push(redirectUrl);
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, redirectUrl]);
 
   const validate = () => {
     const errors: Record<string, string> = {};
@@ -145,28 +147,47 @@ export default function LoginPage() {
                 )}
               </TextField>
 
-              {/* Login Button */}
+              {/* Submit Button */}
               <Button
                 type="submit"
-                variant="primary"
-                isPending={isLoading}
-                className="w-full h-11 bg-primary text-white font-semibold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all flex items-center justify-center gap-2 cursor-pointer"
+                isDisabled={isLoading}
+                className="w-full flex items-center justify-center gap-2 rounded-xl py-6 font-bold bg-primary text-white hover:bg-primary-dark cursor-pointer shadow-lg shadow-primary/20 transition-transform active:scale-[0.98]"
               >
-                {isLoading ? "Signing In..." : "Sign In"}
-                {!isLoading && <ArrowRight className="h-4 w-4" />}
+                {isLoading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <>
+                    Sign In <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
               </Button>
             </form>
-
-            {/* Switch to Register Link */}
-            <div className="mt-6 text-center text-sm">
-              <span className="text-text-muted">New to GameCoins? </span>
-              <Link href="/register" className="text-primary hover:text-primary-light font-semibold underline transition-colors">
-                Create an account
-              </Link>
-            </div>
           </CardContent>
         </Card>
+
+        {/* Footnote */}
+        <p className="mt-6 text-center text-sm text-text-muted">
+          New to GameCoins?{" "}
+          <Link
+            href="/register"
+            className="font-semibold text-primary hover:text-primary-light transition-colors"
+          >
+            Create an account
+          </Link>
+        </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }

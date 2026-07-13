@@ -100,7 +100,7 @@ export default function FeaturedPackages() {
 
               {/* CTA */}
               <Link
-                href="#"
+                href="#popular-games"
                 className={`mt-8 inline-flex w-full items-center justify-center rounded-lg px-6 py-3 text-sm font-semibold transition-all ${
                   pkg.popular
                     ? "bg-primary text-white shadow-lg shadow-primary/25 hover:bg-primary-dark"

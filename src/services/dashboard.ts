@@ -131,5 +131,14 @@ export const dashboardService = {
   async deleteAdminPackage(id: string): Promise<any> {
     return api.delete<any>(`/api/dashboard/admin/packages/${id}`);
   },
+  async getGameBySlug(slug: string): Promise<any> {
+    return api.get<any>(`/api/games/${slug}`);
+  },
+  async createBuyerOrder(data: any): Promise<any> {
+    return api.post<any>("/api/orders", data);
+  },
+  async createBuyerPayment(data: any): Promise<any> {
+    return api.post<any>("/api/payments", data);
+  },
 };
 

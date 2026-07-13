@@ -1,45 +1,116 @@
-import Link from "next/link";
+"use client";
 
-const games = [
-  {
-    name: "Free Fire",
-    category: "Battle Royale",
-    color: "from-orange-500 to-red-500",
-    icon: "FF",
-  },
-  {
-    name: "PUBG Mobile",
-    category: "Battle Royale",
-    color: "from-yellow-500 to-orange-500",
-    icon: "PM",
-  },
-  {
-    name: "Mobile Legends",
-    category: "MOBA",
-    color: "from-blue-500 to-cyan-500",
-    icon: "ML",
-  },
-  {
-    name: "Valorant",
-    category: "Tactical Shooter",
-    color: "from-red-500 to-pink-500",
-    icon: "VA",
-  },
-  {
-    name: "Genshin Impact",
-    category: "Action RPG",
-    color: "from-teal-500 to-green-500",
-    icon: "GI",
-  },
-  {
-    name: "Call of Duty Mobile",
-    category: "First-Person Shooter",
-    color: "from-gray-600 to-gray-900",
-    icon: "CM",
-  },
-];
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { Gamepad2, Layers, Server } from "lucide-react";
+import { dashboardService } from "@/services/dashboard";
 
 export default function PopularGames() {
+  const [games, setGames] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fallback demo games if API is empty or down
+  const demoGames = [
+    {
+      name: "Free Fire",
+      category: "Battle Royale",
+      slug: "free-fire",
+      logo: "",
+      platform: "Mobile",
+      color: "from-orange-500 to-red-500",
+      icon: "FF",
+    },
+    {
+      name: "PUBG Mobile",
+      category: "Battle Royale",
+      slug: "pubg-mobile",
+      logo: "",
+      platform: "Mobile",
+      color: "from-yellow-500 to-orange-500",
+      icon: "PM",
+    },
+    {
+      name: "Mobile Legends",
+      category: "MOBA",
+      slug: "mobile-legends",
+      logo: "",
+      platform: "Mobile",
+      color: "from-blue-500 to-cyan-500",
+      icon: "ML",
+    },
+    {
+      name: "Valorant",
+      category: "Tactical Shooter",
+      slug: "valorant",
+      logo: "",
+      platform: "PC",
+      color: "from-red-500 to-pink-500",
+      icon: "VA",
+    },
+    {
+      name: "Genshin Impact",
+      category: "Action RPG",
+      slug: "genshin-impact",
+      logo: "",
+      platform: "PC, Mobile",
+      color: "from-teal-500 to-green-500",
+      icon: "GI",
+    },
+    {
+      name: "Call of Duty Mobile",
+      category: "First-Person Shooter",
+      slug: "call-of-duty-mobile",
+      logo: "",
+      platform: "Mobile",
+      color: "from-gray-600 to-gray-900",
+      icon: "CM",
+    },
+  ];
+
+  useEffect(() => {
+    async function loadGames() {
+      try {
+        const data: any = await dashboardService.getGames();
+        // The API returns either an array directly or inside an envelope.
+        // Let's handle both based on server response structure.
+        let list = [];
+        if (Array.isArray(data)) {
+          list = data;
+        } else if (data && Array.isArray(data.games)) {
+          list = data.games;
+        }
+
+        if (list.length > 0) {
+          setGames(list);
+        } else {
+          setGames(demoGames);
+        }
+      } catch (err) {
+        console.warn("PopularGames: API connection error, using fallback catalog list:", err);
+        setGames(demoGames);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadGames();
+  }, []);
+
+  const getRandomGradient = (name: string) => {
+    const gradients = [
+      "from-orange-500 to-red-500",
+      "from-yellow-500 to-orange-500",
+      "from-blue-500 to-cyan-500",
+      "from-red-500 to-pink-500",
+      "from-teal-500 to-green-500",
+      "from-gray-600 to-gray-900"
+    ];
+    let sum = 0;
+    for (let i = 0; i < name.length; i++) {
+      sum += name.charCodeAt(i);
+    }
+    return gradients[sum % gradients.length];
+  };
+
   return (
     <section id="popular-games" className="bg-surface py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -49,52 +120,55 @@ export default function PopularGames() {
             Popular Games
           </h2>
           <p className="mt-4 text-lg text-text-muted">
-            Choose from a wide selection of supported games and top up your
-            account in minutes.
+            Choose from a wide selection of supported games and top up your account in minutes.
           </p>
         </div>
 
         {/* Games Grid */}
-        <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          {games.map((game) => (
-            <Link
-              key={game.name}
-              href="#"
-              className="group flex flex-col items-center rounded-xl border border-border bg-surface-light p-6 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
-            >
-              {/* Game Icon */}
-              <div
-                className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${game.color} shadow-lg transition-transform group-hover:scale-110`}
-              >
-                <span className="text-lg font-bold text-white">{game.icon}</span>
-              </div>
+        {loading ? (
+          <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="h-44 rounded-xl border border-border bg-surface-light/40 animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {games.map((game) => {
+              const color = game.color || getRandomGradient(game.name);
+              const initials = game.icon || game.name.split(" ").map((n: string) => n[0]).join("").substring(0, 2).toUpperCase();
 
-              {/* Game Name */}
-              <h3 className="mt-4 text-sm font-semibold text-text">{game.name}</h3>
+              return (
+                <Link
+                  key={game.slug}
+                  href={`/games/${game.slug}`}
+                  className="group flex flex-col items-center rounded-xl border border-border bg-surface-light p-6 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
+                >
+                  {/* Game Icon */}
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl overflow-hidden relative shadow-lg transition-transform group-hover:scale-105">
+                    {game.logo ? (
+                      <img src={game.logo} alt={game.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className={`h-full w-full bg-gradient-to-br ${color} flex items-center justify-center text-white font-bold text-lg`}>
+                        {initials}
+                      </div>
+                    )}
+                  </div>
 
-              {/* Category */}
-              <p className="mt-1 text-xs text-text-muted">{game.category}</p>
+                  {/* Game Name */}
+                  <h3 className="mt-4 text-sm font-semibold text-text text-center truncate w-full">{game.name}</h3>
 
-              {/* Top Up Link */}
-              <span className="mt-3 text-xs font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
-                Top Up Now
-              </span>
-            </Link>
-          ))}
-        </div>
+                  {/* Category */}
+                  <p className="mt-1 text-xs text-text-muted text-center truncate w-full">{game.category || game.platform || "Action"}</p>
 
-        {/* View All Link */}
-        <div className="mt-10 text-center">
-          <Link
-            href="#"
-            className="inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary-light"
-          >
-            View All Games
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </Link>
-        </div>
+                  {/* Top Up Link */}
+                  <span className="mt-3 text-xs font-semibold text-primary opacity-0 transition-opacity group-hover:opacity-100 flex items-center gap-1">
+                    Top Up Now
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
     </section>
   );
