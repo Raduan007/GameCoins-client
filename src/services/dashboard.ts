@@ -65,5 +65,8 @@ export const dashboardService = {
   async updateSellerOrderStatus(id: string, status: string): Promise<any> {
     return api.patch<any>(`/api/dashboard/seller/orders/${id}/status`, { orderStatus: status });
   },
+  async getSellerAnalytics(): Promise<any> {
+    return api.get<any>("/api/dashboard/seller/analytics");
+  },
 };
 
