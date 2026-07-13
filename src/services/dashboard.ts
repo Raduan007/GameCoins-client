@@ -154,5 +154,9 @@ export const dashboardService = {
   async getAdminPaymentById(id: string): Promise<any> {
     return api.get<any>(`/api/dashboard/admin/payments/${id}`);
   },
+  async getAdminReports(params: Record<string, string | number>): Promise<any> {
+    const query = new URLSearchParams(params as any).toString();
+    return api.get<any>(`/api/dashboard/admin/reports?${query}`);
+  },
 };
 
