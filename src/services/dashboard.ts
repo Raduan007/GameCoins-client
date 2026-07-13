@@ -99,5 +99,37 @@ export const dashboardService = {
   async updateAdminUserStatus(id: string, isActive: boolean): Promise<any> {
     return api.patch<any>(`/api/dashboard/admin/users/${id}/status`, { isActive });
   },
+  async getAdminGames(params: Record<string, string | number>): Promise<any> {
+    const query = new URLSearchParams(params as any).toString();
+    return api.get<any>(`/api/dashboard/admin/games?${query}`);
+  },
+  async getAdminGame(id: string): Promise<any> {
+    return api.get<any>(`/api/dashboard/admin/games/${id}`);
+  },
+  async createAdminGame(data: any): Promise<any> {
+    return api.post<any>("/api/dashboard/admin/games", data);
+  },
+  async updateAdminGame(id: string, data: any): Promise<any> {
+    return api.patch<any>(`/api/dashboard/admin/games/${id}`, data);
+  },
+  async deleteAdminGame(id: string): Promise<any> {
+    return api.delete<any>(`/api/dashboard/admin/games/${id}`);
+  },
+  async getAdminPackages(params: Record<string, string | number>): Promise<any> {
+    const query = new URLSearchParams(params as any).toString();
+    return api.get<any>(`/api/dashboard/admin/packages?${query}`);
+  },
+  async getAdminPackage(id: string): Promise<any> {
+    return api.get<any>(`/api/dashboard/admin/packages/${id}`);
+  },
+  async createAdminPackage(data: any): Promise<any> {
+    return api.post<any>("/api/dashboard/admin/packages", data);
+  },
+  async updateAdminPackage(id: string, data: any): Promise<any> {
+    return api.patch<any>(`/api/dashboard/admin/packages/${id}`, data);
+  },
+  async deleteAdminPackage(id: string): Promise<any> {
+    return api.delete<any>(`/api/dashboard/admin/packages/${id}`);
+  },
 };
 

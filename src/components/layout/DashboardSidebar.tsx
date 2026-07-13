@@ -124,8 +124,13 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
       icon: User,
     },
     {
-      label: "Products",
-      href: "/dashboard/admin/products",
+      label: "Games",
+      href: "/dashboard/admin/games",
+      icon: Gamepad2,
+    },
+    {
+      label: "Packages",
+      href: "/dashboard/admin/packages",
       icon: Package,
     },
     {
