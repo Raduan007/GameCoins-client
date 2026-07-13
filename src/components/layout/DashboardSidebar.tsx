@@ -50,6 +50,11 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
       icon: Heart,
     },
     {
+      label: "My Profile",
+      href: "/dashboard/buyer/profile",
+      icon: User,
+    },
+    {
       label: "Browse Games",
       href: "/#popular-games",
       icon: Gamepad2,

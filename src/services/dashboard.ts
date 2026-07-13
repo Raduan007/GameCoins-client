@@ -32,4 +32,10 @@ export const dashboardService = {
   async removeFromWishlist(id: string): Promise<any> {
     return api.delete<any>(`/api/dashboard/wishlist/${id}`);
   },
+  async getBuyerProfile(): Promise<any> {
+    return api.get<any>("/api/dashboard/profile");
+  },
+  async updateBuyerProfile(name: string): Promise<any> {
+    return api.patch<any>("/api/dashboard/profile", { name });
+  },
 };
