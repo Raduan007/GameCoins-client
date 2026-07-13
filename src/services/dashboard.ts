@@ -68,5 +68,14 @@ export const dashboardService = {
   async getSellerAnalytics(): Promise<any> {
     return api.get<any>("/api/dashboard/seller/analytics");
   },
+  async getSellerMessages(): Promise<any[]> {
+    return api.get<any[]>("/api/dashboard/seller/messages");
+  },
+  async getConversation(id: string): Promise<any> {
+    return api.get<any>(`/api/dashboard/seller/messages/${id}`);
+  },
+  async sendMessage(data: { conversationId: string; message: string }): Promise<any> {
+    return api.post<any>("/api/dashboard/seller/messages", data);
+  },
 };
 
