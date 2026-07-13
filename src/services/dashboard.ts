@@ -53,5 +53,11 @@ export const dashboardService = {
   async createSellerProduct(data: any): Promise<any> {
     return api.post<any>("/api/dashboard/seller/products", data);
   },
+  async getSellerProductById(id: string): Promise<any> {
+    return api.get<any>(`/api/dashboard/seller/products/${id}`);
+  },
+  async updateSellerProduct(id: string, data: any): Promise<any> {
+    return api.patch<any>(`/api/dashboard/seller/products/${id}`, data);
+  },
 };
 

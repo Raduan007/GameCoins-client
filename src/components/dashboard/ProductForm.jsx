@@ -5,14 +5,27 @@ import Link from "next/link";
 import { Button, Card, CardContent } from "@heroui/react";
 import { Gamepad2, Tag, FileText, ImageIcon, Image, Layers, ArrowLeft, Loader2 } from "lucide-react";
 
-export default function ProductForm({ games = [], onSubmit, submitting, error }) {
-  const [gameId, setGameId] = useState("");
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
-  const [image, setImage] = useState("");
-  const [banner, setBanner] = useState("");
-  const [isActive, setIsActive] = useState(true);
+export default function ProductForm({ games = [], onSubmit, submitting, error, initialData = null, mode = "create" }) {
+  const [gameId, setGameId] = useState(initialData?.gameId || initialData?.game?._id || initialData?.game || "");
+  const [name, setName] = useState(initialData?.name || "");
+  const [price, setPrice] = useState(initialData?.price ? String(initialData.price) : "");
+  const [description, setDescription] = useState(initialData?.description || "");
+  const [image, setImage] = useState(initialData?.image || "");
+  const [banner, setBanner] = useState(initialData?.banner || "");
+  const [isActive, setIsActive] = useState(initialData?.status === undefined ? true : initialData.status === "active");
+
+  // Sync state if initialData loads asynchronously
+  React.useEffect(() => {
+    if (initialData) {
+      setGameId(initialData.gameId || initialData.game?._id || initialData.game || "");
+      setName(initialData.name || "");
+      setPrice(initialData.price ? String(initialData.price) : "");
+      setDescription(initialData.description || "");
+      setImage(initialData.image || "");
+      setBanner(initialData.banner || "");
+      setIsActive(initialData.status === "active" || initialData.isActive !== false);
+    }
+  }, [initialData]);
 
   // Validation errors state
   const [errors, setErrors] = useState({});
@@ -218,6 +231,8 @@ export default function ProductForm({ games = [], onSubmit, submitting, error })
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" /> Saving...
                 </>
+              ) : mode === "edit" ? (
+                "Update Product"
               ) : (
                 "Create Product"
               )}
