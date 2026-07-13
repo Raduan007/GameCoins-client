@@ -151,7 +151,7 @@ export default function GameDetailsPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#0a0a0f] text-white pt-24 pb-20 relative overflow-hidden">
+      <main className="min-h-screen bg-[#0a0a0f] text-white pt-24 pb-20 relative">
         {/* Glow Effects */}
         <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
