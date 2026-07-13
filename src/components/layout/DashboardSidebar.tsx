@@ -112,7 +112,60 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
     },
   ];
 
-  const menuItems = user?.role === "seller" ? sellerMenuItems : buyerMenuItems;
+  const adminMenuItems = [
+    {
+      label: "Overview",
+      href: "/dashboard/admin",
+      icon: LayoutDashboard,
+    },
+    {
+      label: "Users",
+      href: "/dashboard/admin/users",
+      icon: User,
+    },
+    {
+      label: "Products",
+      href: "/dashboard/admin/products",
+      icon: Package,
+    },
+    {
+      label: "Orders",
+      href: "/dashboard/admin/orders",
+      icon: ShoppingBag,
+    },
+    {
+      label: "Payments",
+      href: "/dashboard/admin/payments",
+      icon: CreditCard,
+    },
+    {
+      label: "Reports",
+      href: "/dashboard/admin/reports",
+      icon: BarChart3,
+    },
+    {
+      label: "Profile",
+      href: "/dashboard/admin/profile",
+      icon: Shield,
+    },
+    {
+      label: "Browse Games",
+      href: "/#popular-games",
+      icon: Gamepad2,
+    },
+    {
+      label: "Home Page",
+      href: "/",
+      icon: Home,
+    },
+  ];
+
+  const menuItems =
+    user?.role === "admin"
+      ? adminMenuItems
+      : user?.role === "seller"
+      ? sellerMenuItems
+      : buyerMenuItems;
 
 
   return (

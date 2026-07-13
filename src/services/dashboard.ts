@@ -83,5 +83,8 @@ export const dashboardService = {
   async updateSellerProfile(name: string): Promise<any> {
     return this.updateBuyerProfile(name);
   },
+  async getAdminOverview(): Promise<any> {
+    return api.get<any>("/api/dashboard/admin/overview");
+  },
 };
 

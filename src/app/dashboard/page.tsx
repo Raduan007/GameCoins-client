@@ -11,7 +11,9 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!loading) {
-      if (user?.role === "seller") {
+      if (user?.role === "admin") {
+        router.replace("/dashboard/admin");
+      } else if (user?.role === "seller") {
         router.replace("/dashboard/seller");
       } else {
         router.replace("/dashboard/buyer");
