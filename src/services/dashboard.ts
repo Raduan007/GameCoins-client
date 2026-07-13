@@ -158,5 +158,14 @@ export const dashboardService = {
     const query = new URLSearchParams(params as any).toString();
     return api.get<any>(`/api/dashboard/admin/reports?${query}`);
   },
+  async getAdminProfile(): Promise<any> {
+    return api.get<any>("/api/dashboard/admin/profile");
+  },
+  async updateAdminProfile(data: { name?: string; avatar?: string }): Promise<any> {
+    return api.patch<any>("/api/dashboard/admin/profile", data);
+  },
+  async changeAdminPassword(data: any): Promise<any> {
+    return api.patch<any>("/api/dashboard/admin/profile/password", data);
+  },
 };
 
