@@ -15,6 +15,7 @@ import {
   ChevronRight,
   ShoppingBag,
   CreditCard,
+  Heart,
 } from "lucide-react";
 import { Avatar, Button } from "@heroui/react";
 
@@ -42,6 +43,11 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
       label: "My Payments",
       href: "/dashboard/buyer/payments",
       icon: CreditCard,
+    },
+    {
+      label: "My Wishlist",
+      href: "/dashboard/buyer/wishlist",
+      icon: Heart,
     },
     {
       label: "Browse Games",

@@ -23,4 +23,13 @@ export const dashboardService = {
   async getBuyerOrderById(id: string): Promise<any> {
     return api.get<any>(`/api/dashboard/orders/${id}`);
   },
+  async getBuyerWishlist(): Promise<any[]> {
+    return api.get<any[]>("/api/dashboard/wishlist");
+  },
+  async addToWishlist(gameId: string): Promise<any> {
+    return api.post<any>("/api/dashboard/wishlist", { gameId });
+  },
+  async removeFromWishlist(id: string): Promise<any> {
+    return api.delete<any>(`/api/dashboard/wishlist/${id}`);
+  },
 };
