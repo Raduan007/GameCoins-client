@@ -147,4 +147,12 @@ export const dashboardService = {
   async updateAdminOrderStatus(id: string, orderStatus: string): Promise<any> {
     return api.patch<any>(`/api/dashboard/admin/orders/${id}/status`, { orderStatus });
   },
+  async getAdminPayments(params: Record<string, string | number>): Promise<any> {
+    const query = new URLSearchParams(params as any).toString();
+    return api.get<any>(`/api/dashboard/admin/payments?${query}`);
+  },
+  async getAdminPaymentById(id: string): Promise<any> {
+    return api.get<any>(`/api/dashboard/admin/payments/${id}`);
+  },
 };
+
