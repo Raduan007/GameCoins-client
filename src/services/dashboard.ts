@@ -17,4 +17,7 @@ export const dashboardService = {
   async getDashboardOverview(): Promise<DashboardOverviewData> {
     return this.getOverview();
   },
+  async getBuyerOrders(): Promise<any[]> {
+    return api.get<any[]>("/api/dashboard/orders");
+  },
 };

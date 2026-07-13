@@ -13,6 +13,7 @@ import {
   Shield,
   Home,
   ChevronRight,
+  ShoppingBag,
 } from "lucide-react";
 import { Avatar, Button } from "@heroui/react";
 
@@ -28,8 +29,13 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
   const menuItems = [
     {
       label: "Overview",
-      href: "/dashboard",
+      href: "/dashboard/buyer",
       icon: LayoutDashboard,
+    },
+    {
+      label: "My Orders",
+      href: "/dashboard/buyer/orders",
+      icon: ShoppingBag,
     },
     {
       label: "Browse Games",
