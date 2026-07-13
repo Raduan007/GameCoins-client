@@ -150,12 +150,12 @@ export default function GameDetailsPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#0a0a0f] text-white pt-24 pb-32 relative">
+      <main className="bg-[#0a0a0f] text-white pt-24 relative">
         {/* Glow Effects */}
         <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
           
           {checkoutSuccess ? (
             /* Checkout Success Screen */
@@ -194,10 +194,10 @@ export default function GameDetailsPage() {
             </div>
           ) : (
             /* Purchase Flow layout */
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start pb-24">
               
               {/* Left Column: Game Profile Details */}
-              <div className="lg:col-span-1 space-y-6">
+              <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-24">
                 <Card className="border border-secondary/15 bg-secondary/5 backdrop-blur-xl rounded-2xl overflow-hidden shadow-xl">
                   {/* Banner */}
                   <div className="h-36 w-full bg-cover bg-center relative" style={{ backgroundImage: `url(${game.banner})` }}>
