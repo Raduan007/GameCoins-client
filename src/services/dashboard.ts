@@ -8,9 +8,6 @@ export interface DashboardOverviewData {
 }
 
 export const dashboardService = {
-  /**
-   * Get the logged-in user's dashboard overview metrics
-   */
   async getOverview(): Promise<DashboardOverviewData> {
     return api.get<DashboardOverviewData>("/api/dashboard/overview");
   },
@@ -140,5 +137,14 @@ export const dashboardService = {
   async createBuyerPayment(data: any): Promise<any> {
     return api.post<any>("/api/payments", data);
   },
+  async getAdminOrders(params: Record<string, string | number>): Promise<any> {
+    const query = new URLSearchParams(params as any).toString();
+    return api.get<any>(`/api/dashboard/admin/orders?${query}`);
+  },
+  async getAdminOrderById(id: string): Promise<any> {
+    return api.get<any>(`/api/dashboard/admin/orders/${id}`);
+  },
+  async updateAdminOrderStatus(id: string, orderStatus: string): Promise<any> {
+    return api.patch<any>(`/api/dashboard/admin/orders/${id}/status`, { orderStatus });
+  },
 };
-
