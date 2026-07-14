@@ -170,5 +170,20 @@ export const dashboardService = {
   async changeAdminPassword(data: any): Promise<any> {
     return api.patch<any>("/api/dashboard/admin/profile/password", data);
   },
+  async approveAdminPayment(id: string): Promise<any> {
+    return api.patch<any>(`/api/admin/payments/${id}/approve`, {});
+  },
+  async rejectAdminPayment(id: string): Promise<any> {
+    return api.patch<any>(`/api/admin/payments/${id}/reject`, {});
+  },
+  async suspendAdminUser(id: string): Promise<any> {
+    return api.patch<any>(`/api/admin/users/${id}/suspend`, {});
+  },
+  async blockAdminUser(id: string): Promise<any> {
+    return api.patch<any>(`/api/admin/users/${id}/block`, {});
+  },
+  async activateAdminUser(id: string): Promise<any> {
+    return api.patch<any>(`/api/admin/users/${id}/activate`, {});
+  },
 };
 

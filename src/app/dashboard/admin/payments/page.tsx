@@ -9,27 +9,80 @@ import {
 import { dashboardService } from "@/services/dashboard";
 import AdminPaymentsTable from "@/components/dashboard/AdminPaymentsTable";
 import PaymentDetailsModal from "@/components/dashboard/PaymentDetailsModal";
+import ConfirmationModal from "@/components/dashboard/ConfirmationModal";
 import toast from "react-hot-toast";
 
 const PAYMENT_METHOD_OPTIONS = ["all", "bkash", "nagad", "card", "sslcommerz"];
 const PAYMENT_STATUS_OPTIONS = ["all", "pending", "paid", "failed"];
 
+interface UserInfo {
+  _id: string;
+  name: string;
+  email: string;
+}
+
+interface GameInfo {
+  _id: string;
+  name: string;
+}
+
+interface OrderInfo {
+  _id: string;
+  game?: GameInfo | null;
+}
+
+interface Payment {
+  _id: string;
+  user?: UserInfo | null;
+  order?: OrderInfo | null;
+  createdAt: string;
+  amount: number;
+  paymentMethod: string;
+  paymentStatus: string;
+  status: string;
+  transactionId?: string | null;
+}
+
+interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+interface ConfirmModalState {
+  isOpen: boolean;
+  title: string;
+  message: string;
+  type: "warning" | "danger" | "success" | "info";
+  confirmLabel: string;
+  onConfirm: () => void | Promise<any>;
+}
+
 export default function AdminPaymentsPage() {
-  const [payments, setPayments] = useState([]);
-  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, totalPages: 1 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [pagination, setPagination] = useState<PaginationInfo>({ page: 1, limit: 10, total: 0, totalPages: 1 });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Filters
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [paymentMethodFilter, setPaymentMethodFilter] = useState("all");
-  const [paymentStatusFilter, setPaymentStatusFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState<string>("all");
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState<string>("all");
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   // Modal
-  const [selectedPayment, setSelectedPayment] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [confirmModal, setConfirmModal] = useState<ConfirmModalState>({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "warning",
+    confirmLabel: "Confirm",
+    onConfirm: () => {},
+  });
 
   // Debounce search
   useEffect(() => {
@@ -41,7 +94,7 @@ export default function AdminPaymentsPage() {
     try {
       setLoading(true);
       setError(null);
-      const params = {
+      const params: any = {
         page: currentPage,
         limit: 10,
       };
@@ -53,7 +106,7 @@ export default function AdminPaymentsPage() {
       const data = res?.data || res;
       setPayments(data?.payments || []);
       setPagination(data?.pagination || { page: 1, limit: 10, total: 0, totalPages: 1 });
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to fetch payments:", err);
       setError("Failed to load payments. Please try again.");
     } finally {
@@ -70,9 +123,53 @@ export default function AdminPaymentsPage() {
     setCurrentPage(1);
   }, [debouncedSearch, paymentMethodFilter, paymentStatusFilter]);
 
-  const handleViewDetails = (payment) => {
+  const handleViewDetails = (payment: Payment) => {
     setSelectedPayment(payment);
     setModalOpen(true);
+  };
+
+  const handleApprovePayment = (paymentId: string) => {
+    setConfirmModal({
+      isOpen: true,
+      title: "Approve Payment",
+      message: "Are you sure you want to approve this payment? This will mark the related order as paid and completed.",
+      type: "success",
+      confirmLabel: "Approve",
+      onConfirm: async () => {
+        try {
+          await dashboardService.approveAdminPayment(paymentId);
+          toast.success("Payment approved successfully.");
+          fetchPayments();
+        } catch (err: any) {
+          console.error("Error approving payment:", err);
+          toast.error(err.message || "Failed to approve payment");
+        } finally {
+          setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        }
+      },
+    });
+  };
+
+  const handleRejectPayment = (paymentId: string) => {
+    setConfirmModal({
+      isOpen: true,
+      title: "Reject Payment",
+      message: "Are you sure you want to reject this payment? This will mark the related order as failed and cancelled.",
+      type: "danger",
+      confirmLabel: "Reject",
+      onConfirm: async () => {
+        try {
+          await dashboardService.rejectAdminPayment(paymentId);
+          toast.success("Payment rejected successfully.");
+          fetchPayments();
+        } catch (err: any) {
+          console.error("Error rejecting payment:", err);
+          toast.error(err.message || "Failed to reject payment");
+        } finally {
+          setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        }
+      },
+    });
   };
 
   const clearFilters = () => {
@@ -192,6 +289,8 @@ export default function AdminPaymentsPage() {
         payments={payments}
         loading={loading}
         onViewDetails={handleViewDetails}
+        onApprove={handleApprovePayment}
+        onReject={handleRejectPayment}
       />
 
       {/* Pagination */}
@@ -247,6 +346,17 @@ export default function AdminPaymentsPage() {
           onClose={() => { setModalOpen(false); setSelectedPayment(null); }}
         />
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        type={confirmModal.type}
+        confirmLabel={confirmModal.confirmLabel}
+        onConfirm={confirmModal.onConfirm}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 }

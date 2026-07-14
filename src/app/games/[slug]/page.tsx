@@ -11,25 +11,81 @@ import { dashboardService } from "@/services/dashboard";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
 
+interface PackageInfo {
+  _id: string;
+  name: string;
+  price: number;
+  amount: number;
+  isPopular?: boolean;
+  description?: string;
+}
+
+interface Game {
+  _id: string;
+  name: string;
+  slug: string;
+  category: string;
+  platform: string;
+  shortDescription: string;
+  fullDescription: string;
+  logo: string;
+  banner: string;
+  packages: PackageInfo[];
+  rating?: number;
+}
+
 export default function GameDetailsPage() {
-  const { slug } = useParams();
+  const { slug } = useParams() as { slug: string };
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
 
-  const [game, setGame] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [game, setGame] = useState<Game | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Selection states
-  const [selectedPackage, setSelectedPackage] = useState(null);
-  const [playerId, setPlayerId] = useState("");
-  const [playerName, setPlayerName] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("bkash");
-  
+  const [selectedPackage, setSelectedPackage] = useState<PackageInfo | null>(null);
+  const [playerId, setPlayerId] = useState<string>("");
+  const [playerName, setPlayerName] = useState<string>("");
+  const [paymentMethod, setPaymentMethod] = useState<string>("bkash");
+  const [quantity, setQuantity] = useState<number>(1);
+
+  useEffect(() => {
+    console.log(`[Quantity] Current quantity state: ${quantity}`);
+  }, [quantity]);
+
+  const handleIncrement = () => {
+    setQuantity((prev) => {
+      const nextVal = prev + 1;
+      console.log(`[Quantity] Increment clicked. Old quantity: ${prev}, New quantity: ${nextVal}`);
+      return nextVal;
+    });
+  };
+
+  const handleDecrement = () => {
+    setQuantity((prev) => {
+      const nextVal = Math.max(1, prev - 1);
+      console.log(`[Quantity] Decrement clicked. Old quantity: ${prev}, New quantity: ${nextVal}`);
+      return nextVal;
+    });
+  };
+
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseInt(e.target.value, 10);
+    console.log(`[Quantity] Direct input change event: "${e.target.value}"`);
+    if (isNaN(val) || val < 1) {
+      setQuantity(1);
+      console.log(`[Quantity] Reset to default minimum: 1`);
+    } else {
+      setQuantity(val);
+      console.log(`[Quantity] Set to: ${val}`);
+    }
+  };
+
   // Checkout process states
-  const [checkingOut, setCheckingOut] = useState(false);
-  const [checkoutSuccess, setCheckoutSuccess] = useState(false);
-  const [createdOrder, setCreatedOrder] = useState(null);
+  const [checkingOut, setCheckingOut] = useState<boolean>(false);
+  const [checkoutSuccess, setCheckoutSuccess] = useState<boolean>(false);
+  const [createdOrder, setCreatedOrder] = useState<any>(null);
 
   useEffect(() => {
     async function loadGameDetails() {
@@ -43,7 +99,7 @@ export default function GameDetailsPage() {
             setSelectedPackage(data.packages[0]);
           }
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error loading game details:", err);
         setError("Game not found or temporarily unavailable.");
       } finally {
@@ -56,6 +112,7 @@ export default function GameDetailsPage() {
   }, [slug]);
 
   const handlePlaceOrder = async () => {
+    if (!game) return;
     if (!isAuthenticated) {
       toast.error("Please log in to complete your purchase.");
       router.push(`/login?redirect=/games/${slug}`);
@@ -81,9 +138,11 @@ export default function GameDetailsPage() {
         packageId: selectedPackage._id,
         playerId: playerId.trim(),
         playerName: playerName.trim(),
-        quantity: 1,
+        quantity: quantity,
         paymentMethod
       };
+
+      console.log("[Quantity] Final order payload before submission:", JSON.stringify(orderPayload, null, 2));
 
       const orderRes = await dashboardService.createBuyerOrder(orderPayload);
       if (!orderRes) {
@@ -105,7 +164,7 @@ export default function GameDetailsPage() {
       toast.success("Order placed and payment record created!");
       setCreatedOrder(order);
       setCheckoutSuccess(true);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Checkout process failed:", err);
       toast.error(err.message || "Failed to process order. Please try again.");
     } finally {
@@ -206,13 +265,10 @@ export default function GameDetailsPage() {
                   
                   <CardContent className="p-6 -mt-8 relative z-10 space-y-6">
                     <div className="flex items-start gap-4">
-                      <Avatar
-                        src={game.logo}
-                        name={game.name}
-                        radius="lg"
-                        className="w-16 h-16 border-2 border-primary/20 bg-surface shadow-lg flex-shrink-0"
-                        fallback={game.name?.charAt(0).toUpperCase()}
-                      />
+                       <Avatar className="w-16 h-16 border-2 border-primary/20 bg-surface shadow-lg flex-shrink-0 rounded-xl">
+                         {game.logo && <Avatar.Image src={game.logo} />}
+                         <Avatar.Fallback>{game.name?.charAt(0).toUpperCase() || "G"}</Avatar.Fallback>
+                       </Avatar>
                       <div className="min-w-0 pt-8">
                         <h2 className="text-xl font-bold text-white truncate">{game.name}</h2>
                         <div className="flex items-center gap-1 text-xs text-primary font-bold mt-1">
@@ -325,10 +381,47 @@ export default function GameDetailsPage() {
                   </Card>
                 </div>
 
-                {/* 3. Payment Method */}
+                {/* 3. Select Quantity */}
                 <div className="space-y-3">
                   <h3 className="text-lg font-bold text-white flex items-center gap-2">
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-xs text-primary font-bold">3</span>
+                    Select Quantity
+                  </h3>
+                  <Card className="border border-secondary/15 bg-secondary/5 backdrop-blur-xl rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="space-y-1 text-center sm:text-left">
+                      <p className="text-sm font-bold text-white">How many top-ups?</p>
+                      <p className="text-xs text-text-dim">Minimum: 1. Value updates final calculation instantly.</p>
+                    </div>
+                    <div className="flex items-center bg-surface-light/40 border border-border/50 rounded-xl p-1 select-none w-full sm:w-auto justify-center">
+                      <button
+                        type="button"
+                        onClick={handleDecrement}
+                        className="h-9 w-9 rounded-lg flex items-center justify-center font-extrabold text-white bg-surface hover:bg-surface-lighter hover:text-primary transition-all active:scale-95 cursor-pointer shadow-sm"
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        min="1"
+                        value={quantity}
+                        onChange={handleQuantityChange}
+                        className="w-16 text-center font-bold text-white bg-transparent border-none focus:outline-none focus:ring-0 text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleIncrement}
+                        className="h-9 w-9 rounded-lg flex items-center justify-center font-extrabold text-white bg-surface hover:bg-surface-lighter hover:text-primary transition-all active:scale-95 cursor-pointer shadow-sm"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </Card>
+                </div>
+
+                {/* 4. Payment Method */}
+                <div className="space-y-3">
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-xs text-primary font-bold">4</span>
                     Choose Payment Method
                   </h3>
                   <div className="grid grid-cols-3 gap-4">
@@ -355,7 +448,7 @@ export default function GameDetailsPage() {
                   </div>
                 </div>
 
-                {/* 4. Auth State Warning & Place Order Action */}
+                {/* 5. Auth State Warning & Place Order Action */}
                 <div className="pt-4 border-t border-border/10 space-y-4">
                   {!isAuthenticated ? (
                     <Card className="border border-warning/35 bg-warning/5 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -375,7 +468,7 @@ export default function GameDetailsPage() {
                       <div className="text-xs">
                         <span className="text-[10px] text-text-dim font-bold uppercase tracking-wider block">Checkout Summary</span>
                         <p className="text-sm font-black text-white mt-1">
-                          {selectedPackage?.name} — <span className="text-primary">${selectedPackage?.price?.toFixed(2)}</span>
+                          {selectedPackage?.name} {quantity > 1 ? `x${quantity}` : ""} — <span className="text-primary">${((selectedPackage?.price || 0) * quantity).toFixed(2)}</span>
                         </p>
                       </div>
                       <Button

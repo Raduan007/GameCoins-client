@@ -4,7 +4,21 @@ import React from "react";
 import { Card, CardContent, Avatar } from "@heroui/react";
 import { Shield, Mail, Calendar, Sparkles, Clock, CircleDot } from "lucide-react";
 
-export default function AdminProfileCard({ profile }) {
+interface AdminProfile {
+  name?: string;
+  email?: string;
+  role?: string;
+  isActive?: boolean;
+  avatar?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface AdminProfileCardProps {
+  profile?: AdminProfile | null;
+}
+
+export default function AdminProfileCard({ profile }: AdminProfileCardProps) {
   const {
     name = "Admin",
     email = "",
@@ -15,7 +29,7 @@ export default function AdminProfileCard({ profile }) {
     updatedAt,
   } = profile || {};
 
-  const formatDate = (dateStr) => {
+  const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return "N/A";
     return new Date(dateStr).toLocaleDateString("en-US", {
       year: "numeric",
@@ -32,10 +46,8 @@ export default function AdminProfileCard({ profile }) {
         <div className="flex flex-col items-center text-center space-y-3 pb-5 border-b border-border/20">
           <div className="relative group">
             <div className="absolute inset-0 bg-gradient-to-tr from-primary to-secondary rounded-full blur-md opacity-60 transition-transform group-hover:scale-105" />
-            <Avatar
-              src={avatar}
-              className="w-20 h-20 border-2 border-primary/20 bg-surface-light text-white font-extrabold text-xl relative z-10 flex items-center justify-center"
-            >
+            <Avatar className="w-20 h-20 border-2 border-primary/20 bg-surface-light text-white font-extrabold text-xl relative z-10 flex items-center justify-center">
+              {avatar && <Avatar.Image src={avatar} />}
               <Avatar.Fallback>{name.charAt(0).toUpperCase()}</Avatar.Fallback>
             </Avatar>
           </div>

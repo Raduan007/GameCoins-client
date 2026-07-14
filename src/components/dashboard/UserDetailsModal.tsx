@@ -4,10 +4,52 @@ import React from "react";
 import { Avatar, Button } from "@heroui/react";
 import { X, User, Mail, Shield, ShieldCheck, Calendar, Heart, ShoppingBag, CreditCard, Loader2 } from "lucide-react";
 
-export default function UserDetailsModal({ isOpen, onClose, userDetails, loading }) {
+interface UserInfo {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  isActive?: boolean;
+  avatar?: string | null;
+  createdAt: string;
+}
+
+interface OrderInfo {
+  _id: string;
+  totalPrice: number;
+  orderStatus: string;
+  createdAt: string;
+  game?: { name: string } | null;
+  package?: { name: string } | null;
+}
+
+interface PaymentInfo {
+  _id: string;
+  amount: number;
+  paymentStatus: string;
+  paymentMethod: string;
+  transactionId?: string | null;
+  createdAt: string;
+}
+
+interface UserDetails {
+  user: UserInfo;
+  recentOrders?: OrderInfo[];
+  payments?: PaymentInfo[];
+  wishlistCount?: number;
+}
+
+interface UserDetailsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  userDetails?: UserDetails | null;
+  loading: boolean;
+}
+
+export default function UserDetailsModal({ isOpen, onClose, userDetails, loading }: UserDetailsModalProps) {
   if (!isOpen) return null;
 
-  const formatDate = (dateStr) => {
+  const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return "N/A";
     return new Date(dateStr).toLocaleDateString("en-US", {
       year: "numeric",
@@ -18,7 +60,7 @@ export default function UserDetailsModal({ isOpen, onClose, userDetails, loading
     });
   };
 
-  const getOrderStatusBadge = (status) => {
+  const getOrderStatusBadge = (status?: string | null) => {
     switch (status?.toLowerCase()) {
       case "completed":
         return "bg-success/10 text-success border-success/20";
@@ -31,7 +73,7 @@ export default function UserDetailsModal({ isOpen, onClose, userDetails, loading
     }
   };
 
-  const getPaymentStatusBadge = (status) => {
+  const getPaymentStatusBadge = (status?: string | null) => {
     switch (status?.toLowerCase()) {
       case "paid":
         return "bg-success/10 text-success border-success/20";
@@ -78,12 +120,10 @@ export default function UserDetailsModal({ isOpen, onClose, userDetails, loading
             <>
               {/* Top Banner: Profile Card readout */}
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4 border border-border/10 rounded-2xl bg-surface-light/10">
-                <Avatar
-                  src={userDetails.user?.avatar}
-                  name={userDetails.user?.name}
-                  className="w-16 h-16 font-black border-2 border-primary/20 bg-surface-light text-white text-xl flex-shrink-0"
-                  fallback={userDetails.user?.name?.charAt(0).toUpperCase()}
-                />
+                <Avatar className="w-16 h-16 font-black border-2 border-primary/20 bg-surface-light text-white text-xl flex-shrink-0">
+                  {userDetails.user?.avatar && <Avatar.Image src={userDetails.user.avatar} />}
+                  <Avatar.Fallback>{userDetails.user?.name?.charAt(0).toUpperCase() || "U"}</Avatar.Fallback>
+                </Avatar>
                 <div className="space-y-1.5 text-center sm:text-left min-w-0">
                   <h4 className="text-lg font-bold text-white truncate">{userDetails.user?.name}</h4>
                   <p className="text-xs text-text-dim truncate">{userDetails.user?.email}</p>
@@ -132,7 +172,7 @@ export default function UserDetailsModal({ isOpen, onClose, userDetails, loading
                   <p className="text-xs text-text-muted italic pl-1">No orders placed by this user.</p>
                 ) : (
                   <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
-                    {userDetails.recentOrders.map((ord) => (
+                    {userDetails.recentOrders?.map((ord) => (
                       <div key={ord._id} className="flex justify-between items-center p-3 border border-border/10 bg-surface-light/5 rounded-xl text-xs hover:bg-surface-light/10 transition-colors">
                         <div>
                           <p className="font-bold text-white">{ord.game?.name || "Game Token"} ({ord.package?.name || "Coins Pack"})</p>
@@ -159,7 +199,7 @@ export default function UserDetailsModal({ isOpen, onClose, userDetails, loading
                   <p className="text-xs text-text-muted italic pl-1">No payment transactions recorded.</p>
                 ) : (
                   <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
-                    {userDetails.payments.map((pay) => (
+                    {userDetails.payments?.map((pay) => (
                       <div key={pay._id} className="flex justify-between items-center p-3 border border-border/10 bg-surface-light/5 rounded-xl text-xs hover:bg-surface-light/10 transition-colors">
                         <div>
                           <p className="font-bold text-white capitalize">{pay.paymentMethod || "gateway"} Payment</p>

@@ -6,34 +6,70 @@ import { Search, Filter, ShieldCheck, AlertCircle, RefreshCw, ChevronLeft, Chevr
 import { dashboardService } from "@/services/dashboard";
 import AdminUsersTable from "@/components/dashboard/AdminUsersTable";
 import UserDetailsModal from "@/components/dashboard/UserDetailsModal";
+import ConfirmationModal from "@/components/dashboard/ConfirmationModal";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
+
+interface UserType {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  status?: string;
+  isActive?: boolean;
+  avatar?: string | null;
+  createdAt: string;
+}
+
+interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+interface ConfirmModalState {
+  isOpen: boolean;
+  title: string;
+  message: string;
+  type: "warning" | "danger" | "success" | "info";
+  confirmLabel: string;
+  onConfirm: () => void | Promise<any>;
+}
 
 export default function AdminUsersPage() {
   const { user: currentUser } = useAuth();
   
-  const [users, setUsers] = useState([]);
-  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, totalPages: 1 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [users, setUsers] = useState<UserType[]>([]);
+  const [pagination, setPagination] = useState<PaginationInfo>({ page: 1, limit: 10, total: 0, totalPages: 1 });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Filters State
-  const [searchTerm, setSearchTerm] = useState("");
-  const [roleFilter, setRoleFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [sortOption, setSortOption] = useState("newest");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [sortOption, setSortOption] = useState<string>("newest");
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   // Modal State
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [userDetails, setUserDetails] = useState(null);
-  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
+  const [userDetails, setUserDetails] = useState<any>(null);
+  const [detailsLoading, setDetailsLoading] = useState<boolean>(false);
+  const [confirmModal, setConfirmModal] = useState<ConfirmModalState>({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "warning",
+    confirmLabel: "Confirm",
+    onConfirm: () => {},
+  });
 
   // Demo fallback state
-  const [showDemo, setShowDemo] = useState(false);
+  const [showDemo, setShowDemo] = useState<boolean>(false);
 
-  const demoUsers = [
+  const demoUsers: UserType[] = [
     {
       _id: "660000000000000000000801",
       name: "Alex Mercer",
@@ -68,7 +104,7 @@ export default function AdminUsersPage() {
     }
   ];
 
-  const demoDetails = {
+  const demoDetails: Record<string, any> = {
     "660000000000000000000801": {
       user: { _id: "660000000000000000000801", name: "Alex Mercer", email: "alex.m@example.com", role: "user", isActive: true, createdAt: new Date().toISOString() },
       recentOrders: [
@@ -108,7 +144,7 @@ export default function AdminUsersPage() {
       setLoading(true);
       setError(null);
       
-      const params = {
+      const params: any = {
         page: currentPage,
         limit: 10,
         search: searchTerm,
@@ -118,11 +154,12 @@ export default function AdminUsersPage() {
       };
 
       const res = await dashboardService.getAdminUsers(params);
-      if (res && res.success && res.data) {
-        setUsers(res.data.users || []);
-        setPagination(res.data.pagination || { page: 1, limit: 10, total: 0, totalPages: 1 });
+      const data = res?.data || res;
+      if (data && (data.users || Array.isArray(data))) {
+        setUsers(data.users || data);
+        setPagination(data.pagination || { page: 1, limit: 10, total: (data.users || data).length, totalPages: 1 });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.warn("Backend user listing failed, using offline fallback preview catalog:", err);
       setError("Admin users API connection failed. Offline list viewer active.");
       
@@ -139,11 +176,11 @@ export default function AdminUsersPage() {
         list = list.filter(u => u.isActive === (statusFilter === "active"));
       }
       if (sortOption === "oldest") {
-        list.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        list.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
       } else if (sortOption === "name") {
         list.sort((a, b) => a.name.localeCompare(b.name));
       } else {
-        list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       }
 
       setUsers(list);
@@ -157,13 +194,13 @@ export default function AdminUsersPage() {
     fetchUsers();
   }, [roleFilter, statusFilter, sortOption, currentPage]);
 
-  const handleSearchSubmit = (e) => {
+  const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1);
     fetchUsers();
   };
 
-  const handleUpdateRole = async (userId, newRole) => {
+  const handleUpdateRole = async (userId: string, newRole: string) => {
     try {
       if (showDemo || error) {
         setUsers(prev => prev.map(u => u._id === userId ? { ...u, role: newRole } : u));
@@ -173,29 +210,94 @@ export default function AdminUsersPage() {
       await dashboardService.updateAdminUserRole(userId, newRole);
       toast.success("User role updated successfully.");
       fetchUsers();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error updating user role:", err);
       toast.error(err.message || "Failed to update user role");
     }
   };
 
-  const handleUpdateStatus = async (userId, newActive) => {
-    try {
-      if (showDemo || error) {
-        setUsers(prev => prev.map(u => u._id === userId ? { ...u, isActive: newActive } : u));
-        toast.success(`User status updated to ${newActive ? 'Active' : 'Inactive'} (Demo).`);
-        return;
-      }
-      await dashboardService.updateAdminUserStatus(userId, newActive);
-      toast.success(`User account ${newActive ? 'activated' : 'deactivated'} successfully.`);
-      fetchUsers();
-    } catch (err) {
-      console.error("Error updating user status:", err);
-      toast.error(err.message || "Failed to update user status");
-    }
+  const handleSuspendUser = (userId: string) => {
+    setConfirmModal({
+      isOpen: true,
+      title: "Suspend User Account",
+      message: "Are you sure you want to suspend this user account? The user will not be able to log in.",
+      type: "warning",
+      confirmLabel: "Suspend",
+      onConfirm: async () => {
+        try {
+          if (showDemo || error) {
+            setUsers((prev) => prev.map((u) => (u._id === userId ? { ...u, status: "suspended", isActive: false } : u)));
+            toast.success("User status updated to Suspended (Demo).");
+            return;
+          }
+          await dashboardService.suspendAdminUser(userId);
+          toast.success("User account suspended successfully.");
+          fetchUsers();
+        } catch (err: any) {
+          console.error("Error suspending user:", err);
+          toast.error(err.message || "Failed to suspend user");
+        } finally {
+          setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        }
+      },
+    });
   };
 
-  const handleOpenDetails = async (usr) => {
+  const handleBlockUser = (userId: string) => {
+    setConfirmModal({
+      isOpen: true,
+      title: "Block User Account",
+      message: "Are you sure you want to block this user account? The user will be completely locked out.",
+      type: "danger",
+      confirmLabel: "Block",
+      onConfirm: async () => {
+        try {
+          if (showDemo || error) {
+            setUsers((prev) => prev.map((u) => (u._id === userId ? { ...u, status: "blocked", isActive: false } : u)));
+            toast.success("User status updated to Blocked (Demo).");
+            return;
+          }
+          await dashboardService.blockAdminUser(userId);
+          toast.success("User account blocked successfully.");
+          fetchUsers();
+        } catch (err: any) {
+          console.error("Error blocking user:", err);
+          toast.error(err.message || "Failed to block user");
+        } finally {
+          setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        }
+      },
+    });
+  };
+
+  const handleActivateUser = (userId: string) => {
+    setConfirmModal({
+      isOpen: true,
+      title: "Activate User Account",
+      message: "Are you sure you want to restore and activate this user account?",
+      type: "success",
+      confirmLabel: "Activate",
+      onConfirm: async () => {
+        try {
+          if (showDemo || error) {
+            setUsers((prev) => prev.map((u) => (u._id === userId ? { ...u, status: "active", isActive: true } : u)));
+            toast.success("User status updated to Active (Demo).");
+            return;
+          }
+          await dashboardService.activateAdminUser(userId);
+          toast.success("User account activated successfully.");
+          fetchUsers();
+        } catch (err: any) {
+          console.error("Error activating user:", err);
+          toast.error(err.message || "Failed to activate user");
+        } finally {
+          setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        }
+      },
+    });
+  };
+
+  const handleOpenDetails = async (usr: UserType) => {
     setSelectedUser(usr);
     setModalOpen(true);
     setDetailsLoading(true);
@@ -209,7 +311,7 @@ export default function AdminUsersPage() {
       if (res && res.success && res.data) {
         setUserDetails(res.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.warn("Could not load user profile details, using mock details fallback:", err);
       setUserDetails(demoDetails[usr._id] || { user: usr, recentOrders: [], payments: [], wishlistCount: 0 });
     } finally {
@@ -330,10 +432,12 @@ export default function AdminUsersPage() {
       <AdminUsersTable
         users={users}
         onUpdateRole={handleUpdateRole}
-        onUpdateStatus={handleUpdateStatus}
+        onSuspend={handleSuspendUser}
+        onBlock={handleBlockUser}
+        onActivate={handleActivateUser}
         onViewDetails={handleOpenDetails}
         loading={loading}
-        currentAdminId={currentUser?._id || currentUser?.userId}
+        currentAdminId={currentUser?._id}
       />
 
       {/* Pagination Controls */}
@@ -341,7 +445,7 @@ export default function AdminUsersPage() {
         <div className="flex items-center justify-center gap-4 pt-4 select-none">
           <Button
             size="sm"
-            disabled={currentPage === 1 || loading}
+            isDisabled={currentPage === 1 || loading}
             onPress={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             className="bg-secondary/15 hover:bg-secondary/30 text-white rounded-lg font-bold min-w-0 px-3 cursor-pointer text-xs flex items-center gap-1 transition-all disabled:opacity-40"
           >
@@ -352,7 +456,7 @@ export default function AdminUsersPage() {
           </span>
           <Button
             size="sm"
-            disabled={currentPage === pagination.totalPages || loading}
+            isDisabled={currentPage === pagination.totalPages || loading}
             onPress={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
             className="bg-secondary/15 hover:bg-secondary/30 text-white rounded-lg font-bold min-w-0 px-3 cursor-pointer text-xs flex items-center gap-1 transition-all disabled:opacity-40"
           >
@@ -367,6 +471,17 @@ export default function AdminUsersPage() {
         onClose={() => { setModalOpen(false); setSelectedUser(null); setUserDetails(null); }}
         userDetails={userDetails}
         loading={detailsLoading}
+      />
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        type={confirmModal.type}
+        confirmLabel={confirmModal.confirmLabel}
+        onConfirm={confirmModal.onConfirm}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
       />
     </div>
   );

@@ -4,26 +4,30 @@ import React from "react";
 import { Button } from "@heroui/react";
 import { Eye, CreditCard, Clock, CheckCircle, XCircle, ShieldCheck, ShieldX } from "lucide-react";
 
-const PAYMENT_STATUS_STYLES = {
-  pending: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-  paid:    "bg-green-500/10 text-green-400 border-green-500/20",
-  failed:  "bg-red-500/10 text-red-400 border-red-500/20",
+const PAYMENT_STATUS_STYLES: Record<string, string> = {
+  pending:  "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
+  paid:     "bg-green-500/10 text-green-400 border-green-500/20",
+  approved: "bg-green-500/10 text-green-400 border-green-500/20",
+  failed:   "bg-red-500/10 text-red-400 border-red-500/20",
+  rejected: "bg-red-500/10 text-red-400 border-red-500/20",
 };
 
-const PAYMENT_STATUS_ICONS = {
-  pending: Clock,
-  paid:    CheckCircle,
-  failed:  XCircle,
+const PAYMENT_STATUS_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  pending:  Clock,
+  paid:     CheckCircle,
+  approved: CheckCircle,
+  failed:   XCircle,
+  rejected: XCircle,
 };
 
-const PAYMENT_METHOD_LABELS = {
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
   bkash: "bKash",
   nagad: "Nagad",
   card: "Credit Card",
   sslcommerz: "SSLCommerz",
 };
 
-function StatusBadge({ status }) {
+function StatusBadge({ status }: { status: string }) {
   const styles = PAYMENT_STATUS_STYLES[status] || "bg-border/10 text-text-muted border-border/20";
   const Icon = PAYMENT_STATUS_ICONS[status] || Clock;
   return (
@@ -59,7 +63,43 @@ function SkeletonCard() {
   );
 }
 
-export default function AdminPaymentsTable({ payments = [], loading, onViewDetails }) {
+interface UserInfo {
+  _id: string;
+  name: string;
+  email: string;
+}
+
+interface GameInfo {
+  _id: string;
+  name: string;
+}
+
+interface OrderInfo {
+  _id: string;
+  game?: GameInfo | null;
+}
+
+interface Payment {
+  _id: string;
+  user?: UserInfo | null;
+  order?: OrderInfo | null;
+  createdAt: string;
+  amount: number;
+  paymentMethod: string;
+  paymentStatus: string;
+  status: string;
+  transactionId?: string | null;
+}
+
+interface AdminPaymentsTableProps {
+  payments?: Payment[];
+  loading: boolean;
+  onViewDetails: (payment: Payment) => void;
+  onApprove: (id: string) => void;
+  onReject: (id: string) => void;
+}
+
+export default function AdminPaymentsTable({ payments = [], loading, onViewDetails, onApprove, onReject }: AdminPaymentsTableProps) {
   if (loading && payments.length === 0) {
     return (
       <div className="space-y-4">
@@ -121,12 +161,13 @@ export default function AdminPaymentsTable({ payments = [], loading, onViewDetai
               {payments.map((payment) => {
                 const paymentId = payment._id?.toString() || "";
                 const shortId = paymentId.slice(-8).toUpperCase();
-                const buyer = payment.user || {};
-                const order = payment.order || {};
-                const game = order?.game || {};
+                const buyer = payment.user;
+                const order = payment.order;
+                const game = order?.game;
                 const date = payment.createdAt
                   ? new Date(payment.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
                   : "—";
+                const status = payment.status || (payment.paymentStatus === "paid" ? "approved" : payment.paymentStatus === "failed" ? "rejected" : "pending");
 
                 return (
                   <tr key={paymentId} className="hover:bg-surface-light/10 transition-colors group">
@@ -138,13 +179,13 @@ export default function AdminPaymentsTable({ payments = [], loading, onViewDetai
                     </td>
                     <td className="p-4">
                       <div>
-                        <p className="text-sm font-semibold text-white truncate max-w-[140px]">{buyer.name || "—"}</p>
-                        <p className="text-[10px] text-text-dim truncate max-w-[140px]">{buyer.email || "—"}</p>
+                        <p className="text-sm font-semibold text-white truncate max-w-[140px]">{buyer?.name || "—"}</p>
+                        <p className="text-[10px] text-text-dim truncate max-w-[140px]">{buyer?.email || "—"}</p>
                       </div>
                     </td>
                     <td className="p-4">
                       <div>
-                        <p className="text-xs font-bold text-white truncate max-w-[160px]">{game.name || "—"}</p>
+                        <p className="text-xs font-bold text-white truncate max-w-[160px]">{game?.name || "—"}</p>
                         <p className="text-[10px] text-text-dim truncate max-w-[160px] font-mono">
                           Order #{order?._id?.toString()?.slice(-8)?.toUpperCase() || "—"}
                         </p>
@@ -161,17 +202,45 @@ export default function AdminPaymentsTable({ payments = [], loading, onViewDetai
                       </span>
                     </td>
                     <td className="p-4">
-                      <StatusBadge status={payment.paymentStatus || "pending"} />
+                      <StatusBadge status={status} />
                     </td>
-                    <td className="p-4">
-                      <Button
-                        size="sm"
-                        onPress={() => onViewDetails(payment)}
-                        className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 rounded-lg text-xs font-bold px-3 py-1.5 flex items-center gap-1.5 cursor-pointer transition-all"
-                      >
-                        <Eye className="h-3.5 w-3.5" />
-                        View
-                      </Button>
+                    <td className="p-4 text-right">
+                      <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                        {status === "pending" ? (
+                          <>
+                            <Button
+                              size="sm"
+                              onPress={() => onApprove(paymentId)}
+                              className="bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20 rounded-lg text-[10px] font-bold px-2.5 py-1 cursor-pointer transition-all"
+                            >
+                              Approve
+                            </Button>
+                            <Button
+                              size="sm"
+                              onPress={() => onReject(paymentId)}
+                              className="bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 rounded-lg text-[10px] font-bold px-2.5 py-1 cursor-pointer transition-all"
+                            >
+                              Reject
+                            </Button>
+                          </>
+                        ) : status === "approved" ? (
+                          <span className="text-[11px] font-bold text-green-400 select-none mr-2">
+                            ✓ Approved
+                          </span>
+                        ) : (
+                          <span className="text-[11px] font-bold text-red-400 select-none mr-2">
+                            ✕ Rejected
+                          </span>
+                        )}
+                        <Button
+                          size="sm"
+                          onPress={() => onViewDetails(payment)}
+                          className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 rounded-lg text-[10px] font-bold px-2.5 py-1 flex items-center gap-1 cursor-pointer transition-all"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          View
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -186,12 +255,14 @@ export default function AdminPaymentsTable({ payments = [], loading, onViewDetai
         {payments.map((payment) => {
           const paymentId = payment._id?.toString() || "";
           const shortId = paymentId.slice(-8).toUpperCase();
-          const buyer = payment.user || {};
-          const order = payment.order || {};
-          const game = order?.game || {};
+          const buyer = payment.user;
+          const order = payment.order;
+          const game = order?.game;
           const date = payment.createdAt
             ? new Date(payment.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
             : "—";
+
+          const status = payment.status || (payment.paymentStatus === "paid" ? "approved" : payment.paymentStatus === "failed" ? "rejected" : "pending");
 
           return (
             <div key={paymentId} className="border border-secondary/15 bg-secondary/5 rounded-2xl p-4 space-y-3">
@@ -204,18 +275,45 @@ export default function AdminPaymentsTable({ payments = [], loading, onViewDetai
               </div>
 
               <div className="space-y-1 text-xs">
-                <p className="text-white font-semibold">{buyer.name || "Unknown Buyer"}</p>
-                <p className="text-text-dim">{buyer.email || "—"}</p>
-                <p className="text-text-muted">{game.name || "—"}</p>
+                <p className="text-white font-semibold">{buyer?.name || "Unknown Buyer"}</p>
+                <p className="text-text-dim">{buyer?.email || "—"}</p>
+                <p className="text-text-muted">{game?.name || "—"}</p>
                 <p className="text-text-dim font-mono text-[10px]">Order #{order?._id?.toString()?.slice(-8)?.toUpperCase() || "—"}</p>
               </div>
 
               <div className="flex flex-wrap gap-2">
-                <StatusBadge status={payment.paymentStatus || "pending"} />
+                <StatusBadge status={status} />
                 <span className="inline-flex items-center px-2.5 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wide bg-secondary/10 text-secondary border-secondary/20">
                   {PAYMENT_METHOD_LABELS[payment.paymentMethod] || payment.paymentMethod || "—"}
                 </span>
               </div>
+
+              {status === "pending" ? (
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    onPress={() => onApprove(paymentId)}
+                    className="flex-1 bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20 rounded-xl text-xs font-bold py-2 cursor-pointer transition-all"
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    size="sm"
+                    onPress={() => onReject(paymentId)}
+                    className="flex-1 bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 rounded-xl text-xs font-bold py-2 cursor-pointer transition-all"
+                  >
+                    Reject
+                  </Button>
+                </div>
+              ) : (
+                <div className="text-xs font-bold py-1">
+                  {status === "approved" ? (
+                    <span className="text-green-400">✓ Approved</span>
+                  ) : (
+                    <span className="text-red-400">✕ Rejected</span>
+                  )}
+                </div>
+              )}
 
               <Button
                 size="sm"

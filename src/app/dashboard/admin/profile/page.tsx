@@ -8,15 +8,25 @@ import ChangePasswordForm from "@/components/dashboard/ChangePasswordForm";
 import { Button } from "@heroui/react";
 import { Shield, AlertCircle, RefreshCw } from "lucide-react";
 
+interface AdminProfile {
+  name: string;
+  email: string;
+  role: string;
+  isActive: boolean;
+  avatar: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function AdminProfilePage() {
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [profile, setProfile] = useState<AdminProfile | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Demo fallback state if API call fails
-  const [showDemo, setShowDemo] = useState(false);
+  const [showDemo, setShowDemo] = useState<boolean>(false);
 
-  const demoProfile = {
+  const demoProfile: AdminProfile = {
     name: "Apex Administrator",
     email: "admin@gamecoins.com",
     role: "admin",
@@ -32,7 +42,7 @@ export default function AdminProfilePage() {
       setError(null);
       const res = await dashboardService.getAdminProfile();
       setProfile(res.data);
-    } catch (err) {
+    } catch (err: any) {
       console.warn("Backend profile API unreachable, activating offline visual demo mockup profile:", err);
       setError("Admin profile API connection failed. Offline preview mode active.");
       setProfile(demoProfile);
@@ -45,7 +55,7 @@ export default function AdminProfilePage() {
     fetchProfile();
   }, []);
 
-  const handleUpdateProfile = async (updateData) => {
+  const handleUpdateProfile = async (updateData: any) => {
     // API trigger
     if (!showDemo && !error) {
       const res = await dashboardService.updateAdminProfile(updateData);
@@ -53,16 +63,19 @@ export default function AdminProfilePage() {
       return res;
     } else {
       // Offline mode mock update
-      setProfile((prev) => ({
-        ...prev,
-        ...updateData,
-        updatedAt: new Date().toISOString(),
-      }));
+      setProfile((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          ...updateData,
+          updatedAt: new Date().toISOString(),
+        };
+      });
       return { data: { ...profile, ...updateData } };
     }
   };
 
-  const handleChangePassword = async (passwordData) => {
+  const handleChangePassword = async (passwordData: any) => {
     // API trigger
     if (!showDemo && !error) {
       return await dashboardService.changeAdminPassword(passwordData);
@@ -94,8 +107,8 @@ export default function AdminProfilePage() {
         <div className="flex gap-2.5 w-full sm:w-auto">
           <Button
             size="sm"
-            onClick={fetchProfile}
-            disabled={loading && !showDemo}
+            onPress={fetchProfile}
+            isDisabled={loading && !showDemo}
             className="bg-secondary/15 border border-secondary/20 hover:bg-secondary/30 text-white rounded-xl font-bold py-5 px-4 cursor-pointer text-xs flex items-center gap-1.5 transition-all flex-1 sm:flex-initial"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${loading && !showDemo ? "animate-spin" : ""}`} /> Refresh
@@ -156,6 +169,7 @@ export default function AdminProfilePage() {
             <>
               {/* Edit name/avatar */}
               <EditProfileForm
+                key={activeProfile ? `${activeProfile.name}-${activeProfile.avatar}-${activeProfile.updatedAt}` : "empty"}
                 profile={activeProfile}
                 onUpdateSuccess={handleUpdateProfile}
               />

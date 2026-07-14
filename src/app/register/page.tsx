@@ -111,7 +111,7 @@ export default function RegisterPage() {
     };
 
     // Verify duplicate script loading is prevented
-    const scriptSrc = "https://accounts.google.com/gsi/client";
+    const scriptSrc = "https://accounts.google.com/gsi/client?hl=en";
     let script = document.querySelector(`script[src="${scriptSrc}"]`) as HTMLScriptElement;
 
     const handleScriptLoad = () => {

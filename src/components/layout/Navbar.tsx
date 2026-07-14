@@ -19,10 +19,9 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
+    { label: "Home", href: "/" },
     { label: "Games", href: "/#popular-games" },
-    { label: "Top-Up", href: "/#featured-packages" },
-    { label: "Why Us", href: "/#why-choose-us" },
-    { label: "FAQ", href: "/#faq" },
+    { label: "Offer", href: "/#featured-packages" },
   ];
 
   return (
