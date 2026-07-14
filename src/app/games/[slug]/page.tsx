@@ -5,11 +5,12 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Avatar, Button, Card, CardContent } from "@heroui/react";
-import { Gamepad2, Layers, Server, ShieldCheck, Award, Star, User, Info, Coins, CheckCircle, ArrowRight, Loader2 } from "lucide-react";
+import { Button, Card, CardContent } from "@heroui/react";
+import { Gamepad2, Layers, Server, ShieldCheck, Award, Star, User, Info, Coins, CheckCircle, ArrowRight, Loader2, X } from "lucide-react";
 import { dashboardService } from "@/services/dashboard";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
+import GameForm from "@/components/dashboard/GameForm";
 
 interface PackageInfo {
   _id: string;
@@ -86,6 +87,50 @@ export default function GameDetailsPage() {
   const [checkingOut, setCheckingOut] = useState<boolean>(false);
   const [checkoutSuccess, setCheckoutSuccess] = useState<boolean>(false);
   const [createdOrder, setCreatedOrder] = useState<any>(null);
+
+  // Edit and Delete states/handlers for Admin
+  const [formOpen, setFormOpen] = useState<boolean>(false);
+  const [submitting, setSubmitting] = useState<boolean>(false);
+
+  const handleEditSubmit = async (formData: any) => {
+    if (!game) return;
+    try {
+      setSubmitting(true);
+      await dashboardService.updateAdminGame(game._id, formData);
+      toast.success("Game details modified successfully.");
+      setFormOpen(false);
+      
+      // Reload game details
+      const data = await dashboardService.getGameBySlug(formData.slug);
+      if (data) {
+        setGame(data);
+      }
+      
+      // If slug has changed, navigate to the updated slug route
+      if (formData.slug !== slug) {
+        router.push(`/games/${formData.slug}`);
+      }
+    } catch (err: any) {
+      console.error("Game submission error:", err);
+      toast.error(err.message || "Failed to update game details.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeleteGame = async () => {
+    if (!game) return;
+    if (window.confirm("Are you sure you want to delete this game catalog profile? This action cannot be undone.")) {
+      try {
+        await dashboardService.deleteAdminGame(game._id);
+        toast.success("Game catalog profile removed successfully.");
+        router.push("/");
+      } catch (err: any) {
+        console.error("Game delete error:", err);
+        toast.error(err.message || "Failed to delete game catalog profile.");
+      }
+    }
+  };
 
   useEffect(() => {
     async function loadGameDetails() {
@@ -176,7 +221,7 @@ export default function GameDetailsPage() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+        <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <span className="text-sm text-text-muted">Loading game catalog profile...</span>
@@ -191,10 +236,10 @@ export default function GameDetailsPage() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4">
+        <div className="min-h-screen bg-background flex items-center justify-center px-4">
           <Card className="max-w-md border border-border bg-surface-light p-8 text-center rounded-2xl">
             <Info className="h-10 w-10 text-error mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-white mb-2">Game Profile Offline</h2>
+            <h2 className="text-xl font-bold text-text mb-2">Game Profile Offline</h2>
             <p className="text-sm text-text-muted mb-6">{error || "Could not retrieve game profile details."}</p>
             <Link href="/" className="inline-flex bg-primary hover:bg-primary-dark text-white rounded-xl font-bold py-3 px-6 text-xs transition-all">
               Return Home
@@ -209,7 +254,7 @@ export default function GameDetailsPage() {
   return (
     <>
       <Navbar />
-      <main className="bg-[#0a0a0f] text-white pt-24 relative">
+      <main className="bg-background text-text pt-24 relative overflow-hidden">
         {/* Glow Effects */}
         <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
@@ -260,15 +305,20 @@ export default function GameDetailsPage() {
                 <Card className="border border-secondary/15 bg-secondary/5 backdrop-blur-xl rounded-2xl overflow-hidden shadow-xl">
                   {/* Banner */}
                   <div className="h-36 w-full bg-cover bg-center relative" style={{ backgroundImage: `url(${game.banner})` }}>
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] to-black/30" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background to-black/30" />
                   </div>
                   
                   <CardContent className="p-6 -mt-8 relative z-10 space-y-6">
                     <div className="flex items-start gap-4">
-                       <Avatar className="w-16 h-16 border-2 border-primary/20 bg-surface shadow-lg flex-shrink-0 rounded-xl">
-                         {game.logo && <Avatar.Image src={game.logo} />}
-                         <Avatar.Fallback>{game.name?.charAt(0).toUpperCase() || "G"}</Avatar.Fallback>
-                       </Avatar>
+                       <div className="w-16 h-16 border-2 border-primary/20 bg-surface shadow-lg flex-shrink-0 rounded-xl overflow-hidden">
+                         {game.logo ? (
+                           <img src={game.logo} alt={game.name} className="h-full w-full object-cover" />
+                         ) : (
+                           <div className="h-full w-full flex items-center justify-center text-xl font-bold bg-primary/20 text-primary">
+                             {game.name?.charAt(0).toUpperCase() || "G"}
+                           </div>
+                         )}
+                       </div>
                       <div className="min-w-0 pt-8">
                         <h2 className="text-xl font-bold text-white truncate">{game.name}</h2>
                         <div className="flex items-center gap-1 text-xs text-primary font-bold mt-1">
@@ -294,6 +344,23 @@ export default function GameDetailsPage() {
                         </div>
                       </div>
                     </div>
+
+                    {user?.role === "admin" && (
+                      <div className="flex gap-2 pt-4 border-t border-border/10">
+                        <Button
+                          onPress={() => setFormOpen(true)}
+                          className="flex-1 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold py-2 text-xs transition-all shadow-md shadow-primary/10"
+                        >
+                          Edit Game
+                        </Button>
+                        <Button
+                          onPress={handleDeleteGame}
+                          className="flex-1 bg-red-600/20 hover:bg-red-600/30 text-red-200 border border-red-500/30 rounded-xl font-bold py-2 text-xs transition-all"
+                        >
+                          Delete Game
+                        </Button>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>
@@ -313,7 +380,7 @@ export default function GameDetailsPage() {
                       No packages are currently published for this game.
                     </Card>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                       {game.packages.map((pkg) => {
                         const isSelected = selectedPackage?._id === pkg._id;
                         return (
@@ -490,6 +557,34 @@ export default function GameDetailsPage() {
 
         </div>
       </main>
+
+      {formOpen && (
+        <div className="fixed inset-0 z-55 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setFormOpen(false)} />
+          <div className="relative w-full max-w-2xl border border-secondary/20 bg-background backdrop-blur-2xl rounded-2xl overflow-hidden shadow-2xl z-10 max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border/20 bg-surface/30">
+              <h3 className="text-base font-bold text-white tracking-wide">
+                Edit Catalog Game Info
+              </h3>
+              <button
+                onClick={() => setFormOpen(false)}
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border text-text-muted hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6">
+              <GameForm
+                initialData={game as any}
+                onSubmit={handleEditSubmit}
+                onCancel={() => setFormOpen(false)}
+                submitting={submitting}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </>
   );

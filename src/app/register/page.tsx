@@ -220,7 +220,7 @@ export default function RegisterPage() {
   const isLoading = authLoading || submitting;
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-[#0a0a0f] px-4 py-12 sm:px-6 lg:px-8 overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8 overflow-hidden">
       {/* Decorative background glows */}
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/20 rounded-full blur-[120px] pointer-events-none" />
@@ -232,11 +232,11 @@ export default function RegisterPage() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary shadow-lg shadow-primary/30 transition-transform group-hover:scale-110">
               <Gamepad2 className="h-5 w-5 text-white" />
             </div>
-            <span className="text-2xl font-bold text-white tracking-wide">
+            <span className="text-2xl font-bold text-text tracking-wide">
               Game<span className="text-primary">Coins</span>
             </span>
           </Link>
-          <h2 className="text-3xl font-extrabold text-white tracking-tight">
+          <h2 className="text-3xl font-extrabold text-text tracking-tight">
             Create an Account
           </h2>
           <p className="mt-2 text-sm text-text-muted">

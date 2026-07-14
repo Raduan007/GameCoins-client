@@ -27,7 +27,7 @@ export default function DashboardLayout({
           <DashboardNavbar onMenuClick={() => setIsSidebarOpen(true)} />
 
           {/* Child Page Content */}
-          <main className="flex-1 overflow-y-auto bg-[#0a0a0f] relative p-6 sm:p-8 lg:p-10">
+          <main className="flex-1 overflow-y-auto bg-background relative p-6 sm:p-8 lg:p-10">
             {/* Glowing background shapes for premium aesthetics */}
             <div className="absolute top-[20%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
             <div className="absolute bottom-[20%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-[100px] pointer-events-none" />

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { Avatar, Button, Card, CardContent } from "@heroui/react";
 import { Mail, Calendar, Shield, Eye, ShieldAlert, Loader2 } from "lucide-react";
 
@@ -120,13 +121,19 @@ export default function AdminUsersTable({
               </tr>
             </thead>
             <tbody>
-              {users.map((usr) => {
+              {users.map((usr, rowIndex) => {
                 const isSelf = usr._id === currentAdminId;
                 const isUpdating = updatingId === usr._id;
                 const status = usr.status || (usr.isActive !== false ? "active" : "suspended");
 
                 return (
-                  <tr key={usr._id} className="border-b border-border/10 last:border-0 hover:bg-surface-light/20 transition-colors duration-200">
+                  <motion.tr
+                    key={usr._id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: rowIndex * 0.04, duration: 0.3, ease: "easeOut" }}
+                    className="border-b border-border/10 last:border-0 hover:bg-surface-light/20 transition-colors duration-200"
+                  >
                     {/* User Avatar + Name */}
                     <td className="p-4 pl-6">
                       <div className="flex items-center gap-3">
@@ -237,7 +244,7 @@ export default function AdminUsersTable({
                         </Button>
                       </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 );
               })}
             </tbody>
@@ -247,13 +254,19 @@ export default function AdminUsersTable({
 
       {/* Mobile Stack Cards View */}
       <div className="block md:hidden space-y-4">
-        {users.map((usr) => {
+        {users.map((usr, cardIndex) => {
           const isSelf = usr._id === currentAdminId;
           const isUpdating = updatingId === usr._id;
           const status = usr.status || (usr.isActive !== false ? "active" : "suspended");
 
           return (
-            <Card key={usr._id} className="border border-secondary/15 bg-secondary/5 backdrop-blur-xl rounded-2xl relative overflow-hidden transition-all duration-300">
+            <motion.div
+              key={usr._id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: cardIndex * 0.05, duration: 0.35, ease: "easeOut" }}
+            >
+            <Card className="border border-secondary/15 bg-secondary/5 backdrop-blur-xl rounded-2xl relative overflow-hidden transition-all duration-300">
               <CardContent className="p-5 space-y-4 text-xs">
                 {/* Header */}
                 <div className="flex justify-between items-center pb-2.5 border-b border-border/20">
@@ -374,6 +387,7 @@ export default function AdminUsersTable({
                 </div>
               </CardContent>
             </Card>
+            </motion.div>
           );
         })}
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import { Button } from "@heroui/react";
 import { Eye, CreditCard, Clock, CheckCircle, XCircle, ShieldCheck, ShieldX } from "lucide-react";
 
@@ -158,7 +159,7 @@ export default function AdminPaymentsTable({ payments = [], loading, onViewDetai
               </tr>
             </thead>
             <tbody className="divide-y divide-border/15">
-              {payments.map((payment) => {
+              {payments.map((payment, rowIndex) => {
                 const paymentId = payment._id?.toString() || "";
                 const shortId = paymentId.slice(-8).toUpperCase();
                 const buyer = payment.user;
@@ -170,7 +171,13 @@ export default function AdminPaymentsTable({ payments = [], loading, onViewDetai
                 const status = payment.status || (payment.paymentStatus === "paid" ? "approved" : payment.paymentStatus === "failed" ? "rejected" : "pending");
 
                 return (
-                  <tr key={paymentId} className="hover:bg-surface-light/10 transition-colors group">
+                  <motion.tr
+                    key={paymentId}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: rowIndex * 0.04, duration: 0.3, ease: "easeOut" }}
+                    className="hover:bg-surface-light/10 transition-colors group"
+                  >
                     <td className="p-4 pl-6">
                       <div>
                         <p className="font-mono text-xs font-bold text-primary">#{shortId}</p>
@@ -242,7 +249,7 @@ export default function AdminPaymentsTable({ payments = [], loading, onViewDetai
                         </Button>
                       </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 );
               })}
             </tbody>
@@ -252,7 +259,7 @@ export default function AdminPaymentsTable({ payments = [], loading, onViewDetai
 
       {/* ── Mobile Cards ── */}
       <div className="md:hidden space-y-3">
-        {payments.map((payment) => {
+        {payments.map((payment, cardIndex) => {
           const paymentId = payment._id?.toString() || "";
           const shortId = paymentId.slice(-8).toUpperCase();
           const buyer = payment.user;
@@ -265,7 +272,13 @@ export default function AdminPaymentsTable({ payments = [], loading, onViewDetai
           const status = payment.status || (payment.paymentStatus === "paid" ? "approved" : payment.paymentStatus === "failed" ? "rejected" : "pending");
 
           return (
-            <div key={paymentId} className="border border-secondary/15 bg-secondary/5 rounded-2xl p-4 space-y-3">
+            <motion.div
+              key={paymentId}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: cardIndex * 0.05, duration: 0.35, ease: "easeOut" }}
+              className="border border-secondary/15 bg-secondary/5 rounded-2xl p-4 space-y-3"
+            >
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="font-mono text-xs font-bold text-primary">#{shortId}</p>
@@ -323,7 +336,7 @@ export default function AdminPaymentsTable({ payments = [], loading, onViewDetai
                 <Eye className="h-3.5 w-3.5" />
                 View Details
               </Button>
-            </div>
+            </motion.div>
           );
         })}
       </div>

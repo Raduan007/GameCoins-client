@@ -1,37 +1,34 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import AnimatedSection from "@/components/ui/AnimatedSection";
+import { staggerContainer, staggerItem } from "@/lib/animations";
 
 const faqItems = [
   {
     question: "How do I top up my game account?",
-    answer:
-      "Simply select your game, choose a package, enter your player ID, and complete the payment. Your game credits will be delivered instantly to your account.",
+    answer: "Simply select your game, choose a package, enter your player ID, and complete the payment. Your game credits will be delivered instantly to your account.",
   },
   {
     question: "Which payment methods do you accept?",
-    answer:
-      "We accept a wide range of payment methods including credit/debit cards, PayPal, Google Pay, Apple Pay, and various local payment options depending on your region.",
+    answer: "We accept a wide range of payment methods including credit/debit cards, PayPal, Google Pay, Apple Pay, and various local payment options depending on your region.",
   },
   {
     question: "How long does delivery take?",
-    answer:
-      "Most top-ups are delivered within seconds of payment confirmation. In rare cases, it may take up to 5 minutes depending on the game server and payment verification.",
+    answer: "Most top-ups are delivered within seconds of payment confirmation. In rare cases, it may take up to 5 minutes depending on the game server and payment verification.",
   },
   {
     question: "Is my personal information secure?",
-    answer:
-      "Absolutely. We use enterprise-grade encryption to protect your data and transactions. We never store your payment details and comply with all security standards.",
+    answer: "Absolutely. We use enterprise-grade encryption to protect your data and transactions. We never store your payment details and comply with all security standards.",
   },
   {
     question: "Can I get a refund if something goes wrong?",
-    answer:
-      "Yes, we offer a 100% satisfaction guarantee. If your top-up doesn't arrive within 30 minutes, contact our support team and we'll resolve it immediately or issue a full refund.",
+    answer: "Yes, we offer a 100% satisfaction guarantee. If your top-up doesn't arrive within 30 minutes, contact our support team and we'll resolve it immediately or issue a full refund.",
   },
   {
     question: "Do you offer discounts for bulk purchases?",
-    answer:
-      "Yes! Our Ultimate Pack offers the best value per coin. We also run regular promotions and seasonal discounts. Follow us on social media to stay updated on the latest deals.",
+    answer: "Yes! Our Ultimate Pack offers the best value per coin. We also run regular promotions and seasonal discounts. Follow us on social media to stay updated on the latest deals.",
   },
 ];
 
@@ -46,7 +43,7 @@ export default function FAQ() {
     <section id="faq" className="py-20 sm:py-28">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mx-auto max-w-2xl text-center">
+        <AnimatedSection variant="fadeInUp" className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
             Frequently Asked Questions
           </h2>
@@ -54,42 +51,65 @@ export default function FAQ() {
             Got questions? We have answers. If you need further assistance, feel
             free to contact our support team.
           </p>
-        </div>
+        </AnimatedSection>
 
-        {/* FAQ Items */}
-        <div className="mt-12 space-y-3">
+        {/* FAQ Items — stagger reveal */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.05 }}
+          className="mt-12 space-y-3"
+        >
           {faqItems.map((item, index) => (
-            <div
+            <motion.div
               key={index}
-              className="rounded-xl border border-border bg-surface-light/50 transition-all hover:border-border/80"
+              variants={staggerItem}
+              className={`rounded-xl border bg-surface-light/50 transition-colors ${
+                openIndex === index ? "border-primary/30" : "border-border hover:border-border/80"
+              }`}
             >
-              <button
+              <motion.button
+                whileHover={{ backgroundColor: "rgba(255,255,255,0.03)" }}
                 onClick={() => toggleFAQ(index)}
-                className="flex w-full items-center justify-between px-6 py-5 text-left"
+                className="flex w-full items-center justify-between px-6 py-5 text-left rounded-xl"
                 aria-expanded={openIndex === index}
               >
-                <span className="text-sm font-semibold text-text sm:text-base">
+                <span className="text-sm font-semibold text-text sm:text-base pr-4">
                   {item.question}
                 </span>
-                <svg
-                  className={`h-5 w-5 flex-shrink-0 text-text-muted transition-transform ${
-                    openIndex === index ? "rotate-180" : ""
-                  }`}
+                <motion.svg
+                  animate={{ rotate: openIndex === index ? 180 : 0 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="h-5 w-5 flex-shrink-0 text-text-muted"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              {openIndex === index && (
-                <div className="border-t border-border px-6 pb-5 pt-3">
-                  <p className="text-sm leading-relaxed text-text-muted">{item.answer}</p>
-                </div>
-              )}
-            </div>
+                </motion.svg>
+              </motion.button>
+
+              {/* Accordion answer — smooth height with AnimatePresence */}
+              <AnimatePresence initial={false}>
+                {openIndex === index && (
+                  <motion.div
+                    key="answer"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    className="overflow-hidden"
+                  >
+                    <div className="border-t border-border px-6 pb-5 pt-3">
+                      <p className="text-sm leading-relaxed text-text-muted">{item.answer}</p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
