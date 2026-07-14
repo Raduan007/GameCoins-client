@@ -38,10 +38,10 @@ export default function Footer() {
     <footer className="border-t border-border bg-surface">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
-        <div className="grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-5 text-center lg:text-left">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center justify-center lg:justify-start gap-2">
               <div className="flex h-8 w-8 items-center justify-center">
                 <img src="/assets/gamecoins.png" alt="GameCoins" className="h-8 w-8 object-contain" />
               </div>
@@ -49,18 +49,18 @@ export default function Footer() {
                 Game<span className="text-primary">Coins</span>
               </span>
             </Link>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-text-muted">
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-text-muted text-center lg:text-left mx-auto lg:mx-0">
               GameCoins is the leading game top-up platform, providing instant
               delivery of game credits at the best prices. Trusted by over
               100,000 gamers worldwide.
             </p>
-
+ 
             {/* Payment Methods */}
             <div className="mt-6">
-              <p className="text-xs font-semibold uppercase tracking-wider text-text-dim">
+              <p className="text-xs font-semibold uppercase tracking-wider text-text-dim text-center lg:text-left">
                 Accepted Payments
               </p>
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-3 flex flex-wrap justify-center lg:justify-start gap-2">
                 {["Visa", "Mastercard", "PayPal", "Google Pay", "Apple Pay"].map((method) => (
                   <span
                     key={method}
@@ -72,7 +72,7 @@ export default function Footer() {
               </div>
             </div>
           </div>
-
+ 
           {/* Links Columns */}
           {Object.values(footerLinks).map((section) => (
             <div key={section.title}>

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 import {
   staggerContainer,
   staggerItem,
@@ -11,6 +12,45 @@ import {
   floatAnimationSlow,
 } from "@/lib/animations";
 import { dashboardService } from "@/services/dashboard";
+
+const leftColumnVariants: Variants = {
+  hidden: { opacity: 0, x: -80 },
+  show: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.25, 0.46, 0.45, 0.94] as const,
+      staggerChildren: 0.08,
+      delayChildren: 0.15,
+    },
+  },
+};
+
+const leftItemVariants: Variants = {
+  hidden: { opacity: 0, x: -40 },
+  show: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.46, 0.45, 0.94] as const,
+    },
+  },
+};
+
+const rightColumnVariants: Variants = {
+  hidden: { opacity: 0, x: 80 },
+  show: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.9,
+      ease: [0.25, 0.46, 0.45, 0.94] as const,
+      delay: 0.3,
+    },
+  },
+};
 
 export default function Hero() {
   const [games, setGames] = useState<any[]>([]);
@@ -69,9 +109,6 @@ export default function Hero() {
         .animate-marquee-slow {
           animation: marquee 35s linear infinite;
         }
-        .animate-marquee-slow:hover {
-          animation-play-state: paused;
-        }
       `}</style>
 
       {/* Floating decorative orbs */}
@@ -91,13 +128,13 @@ export default function Hero() {
           <div className="lg:col-span-6 text-left">
             <motion.div
               className="space-y-6"
-              variants={staggerContainer}
+              variants={leftColumnVariants}
               initial="hidden"
               animate="show"
             >
               {/* Badge */}
               <motion.div
-                variants={fadeIn}
+                variants={leftItemVariants}
                 className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-light/50 px-4 py-1.5 text-sm text-text-muted"
               >
                 <motion.span
@@ -110,7 +147,7 @@ export default function Hero() {
 
               {/* Heading */}
               <motion.h1
-                variants={staggerItem}
+                variants={leftItemVariants}
                 className="text-4xl font-extrabold leading-tight tracking-tight text-text sm:text-5xl lg:text-6xl"
               >
                 Top Up Your Favorite{" "}
@@ -119,7 +156,7 @@ export default function Hero() {
 
               {/* Subheading */}
               <motion.p
-                variants={staggerItem}
+                variants={leftItemVariants}
                 className="text-lg leading-relaxed text-text-muted sm:text-xl"
               >
                 Get game credits, diamonds, and premium currency delivered to your
@@ -129,7 +166,7 @@ export default function Hero() {
 
               {/* CTA Buttons */}
               <motion.div
-                variants={staggerItem}
+                variants={leftItemVariants}
                 className="flex flex-col sm:flex-row gap-4 items-center justify-start"
               >
                 <motion.div
@@ -166,7 +203,7 @@ export default function Hero() {
 
               {/* Stats Row */}
               <motion.div
-                variants={staggerContainer}
+                variants={leftItemVariants}
                 className="grid grid-cols-3 gap-6 border-t border-border pt-8"
               >
                 {[
@@ -184,7 +221,12 @@ export default function Hero() {
           </div>
 
           {/* Right Column: Game Cards Marquee (6 cols on lg) */}
-          <div className="lg:col-span-6 relative w-full overflow-hidden py-6 select-none">
+          <motion.div 
+            className="lg:col-span-6 relative w-full overflow-hidden py-6 select-none"
+            variants={rightColumnVariants}
+            initial="hidden"
+            animate="show"
+          >
             <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
             <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
 
@@ -254,7 +296,7 @@ export default function Hero() {
                 })}
               </div>
             )}
-          </div>
+          </motion.div>
 
         </div>
       </div>
