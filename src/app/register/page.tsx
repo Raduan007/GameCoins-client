@@ -229,8 +229,8 @@ export default function RegisterPage() {
         {/* Brand Header */}
         <div className="flex flex-col items-center mb-8 text-center">
           <Link href="/" className="flex items-center gap-2 mb-4 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary shadow-lg shadow-primary/30 transition-transform group-hover:scale-110">
-              <Gamepad2 className="h-5 w-5 text-white" />
+            <div className="flex h-10 w-10 items-center justify-center">
+              <img src="/assets/gamecoins.png" alt="GameCoins" className="h-10 w-10 object-contain" />
             </div>
             <span className="text-2xl font-bold text-text tracking-wide">
               Game<span className="text-primary">Coins</span>

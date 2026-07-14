@@ -6,7 +6,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useTheme } from "@/components/ui/ThemeProvider";
 import { useAuth } from "@/context/AuthContext";
 import {
-  LogOut, LayoutDashboard, Gamepad2, Menu, X, Sun, Moon, LogIn, UserPlus,
+  LogOut, LayoutDashboard, Menu, X, Sun, Moon, LogIn, UserPlus,
 } from "lucide-react";
 import { Avatar } from "@heroui/react";
 import { slideInDown, staggerContainerFast, staggerItemFade } from "@/lib/animations";
@@ -53,9 +53,9 @@ export default function Navbar() {
             <motion.div
               whileHover={shouldReduceMotion ? undefined : { scale: 1.1, rotate: 8 }}
               transition={{ type: "spring", stiffness: 400, damping: 18 }}
-              className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary"
+              className="flex h-8 w-8 items-center justify-center"
             >
-              <Gamepad2 className="h-4 w-4 text-white" />
+              <img src="/assets/gamecoins.png" alt="GameCoins" className="h-8 w-8 object-contain" />
             </motion.div>
             <span className="text-xl font-bold text-white tracking-wide">
               Game<span className="text-primary">Coins</span>

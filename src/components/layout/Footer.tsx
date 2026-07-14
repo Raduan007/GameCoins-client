@@ -42,8 +42,8 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary">
-                <span className="text-sm font-bold text-white">G</span>
+              <div className="flex h-8 w-8 items-center justify-center">
+                <img src="/assets/gamecoins.png" alt="GameCoins" className="h-8 w-8 object-contain" />
               </div>
               <span className="text-xl font-bold text-text">
                 Game<span className="text-primary">Coins</span>

@@ -19,6 +19,11 @@ export const metadata: Metadata = {
   title: "GameCoins — Game Top-Up Platform",
   description:
     "Top up your favorite games instantly with GameCoins. Fast, secure, and affordable game credits for Free Fire, PUBG, Mobile Legends, and more.",
+  icons: {
+    icon: "/assets/gamecoins.png",
+    shortcut: "/assets/gamecoins.png",
+    apple: "/assets/gamecoins.png",
+  },
 };
 
 export default function RootLayout({

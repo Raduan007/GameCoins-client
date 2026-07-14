@@ -171,19 +171,19 @@ export const dashboardService = {
     return api.patch<any>("/api/dashboard/admin/profile/password", data);
   },
   async approveAdminPayment(id: string): Promise<any> {
-    return api.patch<any>(`/api/admin/payments/${id}/approve`, {});
+    return api.patch<any>(`/api/dashboard/admin/payments/${id}/approve`, {});
   },
   async rejectAdminPayment(id: string): Promise<any> {
-    return api.patch<any>(`/api/admin/payments/${id}/reject`, {});
+    return api.patch<any>(`/api/dashboard/admin/payments/${id}/reject`, {});
   },
   async suspendAdminUser(id: string): Promise<any> {
-    return api.patch<any>(`/api/admin/users/${id}/suspend`, {});
+    return api.patch<any>(`/api/dashboard/admin/users/${id}/suspend`, {});
   },
   async blockAdminUser(id: string): Promise<any> {
-    return api.patch<any>(`/api/admin/users/${id}/block`, {});
+    return api.patch<any>(`/api/dashboard/admin/users/${id}/block`, {});
   },
   async activateAdminUser(id: string): Promise<any> {
-    return api.patch<any>(`/api/admin/users/${id}/activate`, {});
+    return api.patch<any>(`/api/dashboard/admin/users/${id}/activate`, {});
   },
 };
 
