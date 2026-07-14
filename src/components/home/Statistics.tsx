@@ -20,7 +20,7 @@ export default function Statistics() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="absolute inset-0 bg-gradient-to-r from-primary/5 via-secondary/5 to-primary/5"
+        className="absolute inset-0 bg-primary/5"
       />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -62,7 +62,7 @@ export default function Statistics() {
                 transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.1 }}
                 className="text-4xl font-extrabold text-text sm:text-5xl"
               >
-                <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                <span className="text-primary">
                   {stat.value}
                 </span>
               </motion.div>

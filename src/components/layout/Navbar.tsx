@@ -15,6 +15,7 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const { theme, toggleTheme } = useTheme();
   const { user, isAuthenticated, logout } = useAuth();
   const shouldReduceMotion = useReducedMotion();
@@ -63,23 +64,35 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-8 md:flex">
+          <nav 
+            className="hidden items-center gap-1 md:flex bg-surface-light/35 border border-border/40 rounded-xl p-1 relative"
+            onMouseLeave={() => setHoveredIndex(null)}
+          >
             {navLinks.map((link, i) => (
               <motion.div
                 key={link.href}
                 initial={shouldReduceMotion ? false : { opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + i * 0.05, duration: 0.35, ease: "easeOut" }}
-                className="relative group"
+                className="relative"
+                onMouseEnter={() => setHoveredIndex(i)}
               >
                 <Link
                   href={link.href}
-                  className="text-sm font-medium text-text-muted transition-colors hover:text-white"
+                  className={`relative z-10 px-4 py-1.5 text-sm font-semibold transition-colors duration-200 block rounded-lg ${
+                    hoveredIndex === i ? "text-white" : "text-text-muted hover:text-white"
+                  }`}
                 >
                   {link.label}
                 </Link>
-                {/* Animated underline */}
-                <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-primary transition-all duration-300 group-hover:w-full" />
+                
+                {hoveredIndex === i && (
+                  <motion.span
+                    layoutId="navbar-hover-pill"
+                    className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-lg -z-0"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
               </motion.div>
             ))}
           </nav>

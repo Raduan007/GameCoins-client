@@ -14,18 +14,34 @@
   --text-muted: #94a3b8;
   --text-dim: #64748b;
   --border: #1e293b;
+
+  /* Primary is orange, Secondary is green */
+  --primary: #f97316;
+  --primary-dark: #ea580c;
+  --primary-light: #fb923c;
+  --secondary: #22c55e;
+  --secondary-dark: #16a34a;
+  --secondary-light: #4ade80;
 }
 
 .light {
-  --background: #e8effa;      /* Soothing pastel blue background matching secondary brand color */
-  --foreground: #0f2a4a;      /* Deep navy blue text for excellent reading contrast */
-  --surface: #ffffff;         /* Clean white card backgrounds for depth */
-  --surface-light: #f0f5fc;   /* Light blue-tinted secondary cards */
-  --surface-lighter: #cbd8f5; /* Muted blue-grey accents */
-  --text: #0f2a4a;            /* Primary dark navy text */
-  --text-muted: #2c4b75;      /* Muted navy text */
-  --text-dim: #5477a3;        /* Dimmed secondary text */
-  --border: #cad8f3;          /* Soft blue border */
+  --background: #090d16;      /* Deep dark navy background */
+  --foreground: #f8fafc;      /* Light text for dark mode contrast */
+  --surface: #0f1626;         /* Deep dark navy card backgrounds */
+  --surface-light: #1e293b;   /* Muted navy secondary cards */
+  --surface-lighter: #2e3e59; /* Blue-grey accents */
+  --text: #f8fafc;            /* Primary light text */
+  --text-muted: #94a3b8;      /* Muted text */
+  --text-dim: #64748b;        /* Dimmed secondary text */
+  --border: #1d2b45;          /* Muted dark blue border */
+
+  /* In blue dark theme, Primary is blue and Secondary is green */
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #3b82f6;
+  --secondary: #22c55e;
+  --secondary-dark: #16a34a;
+  --secondary-light: #4ade80;
 }
 
 @theme inline {
@@ -34,13 +50,13 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* GameCoins Brand Colors */
-  --color-primary: #f97316;
-  --color-primary-dark: #ea580c;
-  --color-primary-light: #fb923c;
-  --color-secondary: #22c55e;
-  --color-secondary-dark: #16a34a;
-  --color-secondary-light: #4ade80;
+  /* GameCoins Brand Colors mapped to theme variables */
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
+  --color-secondary: var(--secondary);
+  --color-secondary-dark: var(--secondary-dark);
+  --color-secondary-light: var(--secondary-light);
   --color-accent: #06b6d4;
   --color-surface: var(--surface);
   --color-surface-light: var(--surface-light);

@@ -244,6 +244,8 @@ export default function RegisterPage() {
           </p>
         </div>
 
+
+
         {/* Card wrapper with glassmorphism */}
         <Card className="border border-border/40 bg-surface/60 backdrop-blur-xl shadow-2xl rounded-2xl">
           <CardContent className="p-8">

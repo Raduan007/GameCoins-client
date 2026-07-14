@@ -192,7 +192,7 @@ export default function SellerDashboardPage() {
           <Card className="border border-border/40 bg-surface/40 backdrop-blur-xl shadow-xl rounded-2xl h-full border-secondary/10">
             <CardContent className="p-8 flex flex-col items-center text-center">
               <div className="relative group mb-4">
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary to-secondary rounded-full blur-md opacity-70 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-primary rounded-full blur-md opacity-70 group-hover:opacity-100 transition-opacity" />
                 <Avatar className="w-24 h-24 text-3xl font-bold border-2 border-primary/40 relative z-10 bg-surface-light text-white flex items-center justify-center font-bold">
                   <Avatar.Fallback>{(user?.name || "M").charAt(0).toUpperCase()}</Avatar.Fallback>
                 </Avatar>

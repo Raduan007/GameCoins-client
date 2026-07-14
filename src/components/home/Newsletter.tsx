@@ -8,7 +8,7 @@ export default function Newsletter() {
   return (
     <section id="newsletter" className="relative overflow-hidden py-20 sm:py-28">
       {/* Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10" />
+      <div className="absolute inset-0 bg-primary/5" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <AnimatedSection variant="scaleIn">
@@ -16,7 +16,7 @@ export default function Newsletter() {
             {/* Icon — floating */}
             <motion.div
               animate={floatAnimationSlow}
-              className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20"
+              className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10"
             >
               <svg className="h-7 w-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />

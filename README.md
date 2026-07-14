@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎮 GameCoins
 
-## Getting Started
+A full-stack game top-up platform where users can browse games, purchase top-up packages, and manage orders through a secure and responsive web application.
 
-First, run the development server:
+## 🔗 Live Links
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Live Site:** https://game-coins-client-delta.vercel.app
+- **Frontend Repository:** https://github.com/Raduan007/GameCoins-client
+- **Backend Repository:** https://github.com/Raduan007/GameCoins-server
+
+---
+
+## ✨ Features
+
+### Authentication
+- Email & Password Login
+- Google Authentication
+- JWT Authentication
+- Protected Routes
+- Role-Based Authorization (User & Admin)
+
+### User Features
+- Browse available games
+- View game details
+- Purchase top-up packages
+- Place orders
+- View order history
+- Manage user profile
+
+### Admin Features
+- Dashboard overview
+- Manage games
+- Manage top-up packages
+- Manage orders
+- View payment records
+- Manage users
+
+### UI
+- Fully responsive design
+- Modern gaming interface
+- Loading states
+- Form validation
+- Clean dashboard layout
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- HeroUI
+- Framer Motion
+
+### Backend
+- Node.js
+- Express.js
+- TypeScript
+- MongoDB
+- Mongoose
+- JWT
+- bcrypt
+
+---
+
+
+
+
+## 👤 Demo Credentials
+
+### User
+
+```
+Email: User@gmail.com
+Password: User123?
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Admin
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+Email: admin@gmail.com
+Password: Admin123? 
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 👨‍💻 Author
 
-To learn more about Next.js, take a look at the following resources:
+**Raduan Hossen**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+GitHub: https://github.com/Raduan007
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+LinkedIn: https://www.linkedin.com/in/raduanhossen857

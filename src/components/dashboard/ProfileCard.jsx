@@ -69,7 +69,7 @@ export default function ProfileCard({ profile, onSave, mode }) {
         {/* Top Header: Avatar & Title */}
         <div className="flex flex-col items-center text-center pb-6 border-b border-border/30">
           <div className="relative group mb-4">
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary to-secondary rounded-full blur-md opacity-70" />
+            <div className="absolute inset-0 bg-primary rounded-full blur-md opacity-70" />
             <Avatar className="w-28 h-28 text-4xl font-black border-2 border-primary/40 relative z-10 bg-surface-light text-white flex items-center justify-center font-bold">
               <Avatar.Fallback>{(name || "G").charAt(0).toUpperCase()}</Avatar.Fallback>
             </Avatar>

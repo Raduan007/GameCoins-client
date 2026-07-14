@@ -63,7 +63,7 @@ export default function OrderCard({ order }) {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border/40 pb-4">
           <div className="flex items-center gap-3">
             <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary to-secondary rounded-xl blur-sm opacity-50" />
+              <div className="absolute inset-0 bg-primary rounded-xl blur-sm opacity-50" />
               {game?.logo ? (
                 <img
                   src={game.logo}

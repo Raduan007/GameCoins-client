@@ -88,7 +88,7 @@ export default function AdminProfileCard({ profile }: AdminProfileCardProps) {
           animate={{ scaleX: 1 }}
           transition={{ delay: 0.2, duration: 0.5, ease: "easeOut" }}
           style={{ transformOrigin: "left" }}
-          className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-primary via-secondary to-primary opacity-60"
+          className="absolute top-0 inset-x-0 h-2 bg-primary opacity-60"
         />
 
         <CardContent className="p-6 space-y-6">
@@ -103,7 +103,7 @@ export default function AdminProfileCard({ profile }: AdminProfileCardProps) {
               <motion.div
                 animate={{ opacity: [0.5, 0.7, 0.5] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute inset-0 bg-gradient-to-tr from-primary to-secondary rounded-full blur-md"
+                className="absolute inset-0 bg-primary rounded-full blur-md"
               />
               <Avatar className="w-20 h-20 border-2 border-primary/20 bg-surface-light text-white font-extrabold text-xl relative z-10 flex items-center justify-center">
                 {avatar && <Avatar.Image src={avatar} />}

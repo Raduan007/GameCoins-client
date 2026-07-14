@@ -38,7 +38,7 @@ export default function SellerProductCard({ product, onDelete }) {
         <div className="flex justify-between items-start gap-4 pb-3 border-b border-border/20">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary to-secondary rounded-lg blur-xs opacity-40" />
+              <div className="absolute inset-0 bg-primary rounded-lg blur-xs opacity-40" />
               {game?.logo ? (
                 <img
                   src={game.logo}

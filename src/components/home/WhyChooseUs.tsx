@@ -77,11 +77,10 @@ export default function WhyChooseUs() {
               className="group rounded-2xl border border-border bg-surface-light/50 p-6 transition-colors hover:border-primary/20 hover:bg-surface-light"
               style={{ willChange: "transform" }}
             >
-              {/* Icon — rotates on hover */}
               <motion.div
                 whileHover={{ rotate: 8, scale: 1.12 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 text-primary transition-colors group-hover:from-primary/30 group-hover:to-secondary/30"
+                className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary/20"
               >
                 {reason.icon}
               </motion.div>

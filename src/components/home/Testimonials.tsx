@@ -96,7 +96,7 @@ export default function Testimonials() {
                 <motion.div
                   whileHover={{ scale: 1.1 }}
                   transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-sm font-semibold text-white"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white"
                 >
                   {testimonial.avatar}
                 </motion.div>

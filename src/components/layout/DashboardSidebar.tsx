@@ -192,8 +192,8 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
         {/* Header/Logo */}
         <div className="flex h-16 items-center justify-between px-6 border-b border-border/40">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary transition-transform group-hover:scale-105">
-              <Gamepad2 className="h-4 w-4 text-white" />
+            <div className="flex h-8 w-8 items-center justify-center transition-transform group-hover:scale-105">
+              <img src="/assets/gamecoins.png" alt="GameCoins" className="h-8 w-8 object-contain" />
             </div>
             <span className="text-xl font-bold text-white tracking-wide">
               Game<span className="text-primary">Coins</span>
@@ -211,7 +211,7 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
         <div className="p-6 border-b border-border/40">
           <div className="flex items-center gap-3">
             <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary to-secondary rounded-full blur-sm opacity-60" />
+              <div className="absolute inset-0 bg-primary rounded-full blur-sm opacity-60" />
               <Avatar className="w-11 h-11 border border-primary/20 bg-surface-light text-white relative z-10 flex items-center justify-center font-bold">
                 <Avatar.Fallback>{(user?.name || "U").charAt(0).toUpperCase()}</Avatar.Fallback>
               </Avatar>

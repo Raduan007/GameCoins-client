@@ -171,7 +171,7 @@ export default function BuyerOrderDetailsPage({ params }) {
               {/* Game details header */}
               <div className="flex items-start gap-4 pb-6 border-b border-border/40">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-primary to-secondary rounded-2xl blur-sm opacity-50" />
+                  <div className="absolute inset-0 bg-primary rounded-2xl blur-sm opacity-50" />
                   {game?.logo ? (
                     <img
                       src={game.logo}

@@ -62,7 +62,7 @@ export default function TopSellingGames({ games = [] }) {
               </div>
               <div className="h-1.5 w-full bg-surface-light/45 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-500"
+                  className="h-full bg-primary rounded-full transition-all duration-500"
                   style={{ width: `${percentage}%` }}
                 />
               </div>

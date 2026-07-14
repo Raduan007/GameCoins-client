@@ -72,10 +72,10 @@ export default function FeaturedPackages() {
               {/* Popular Badge — pulsing */}
               {pkg.popular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <motion.span
-                    animate={pulseAnimation}
-                    className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-primary to-secondary px-4 py-1 text-xs font-semibold text-white"
-                  >
+                   <motion.span
+                     animate={pulseAnimation}
+                     className="inline-flex items-center gap-1 rounded-full bg-primary px-4 py-1 text-xs font-semibold text-white"
+                   >
                     Most Popular
                   </motion.span>
                 </div>

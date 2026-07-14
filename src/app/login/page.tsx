@@ -33,6 +33,14 @@ function LoginContent() {
 
   useEffect(() => {
     if (!mounted) return;
+    const qEmail = searchParams.get("email");
+    const qPassword = searchParams.get("password");
+    if (qEmail) setEmail(qEmail);
+    if (qPassword) setPassword(qPassword);
+  }, [searchParams, mounted]);
+
+  useEffect(() => {
+    if (!mounted) return;
 
     console.log("[Google Auth] Component mounted on client. Checking Client ID...");
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
@@ -198,6 +206,22 @@ function LoginContent() {
     }
   };
 
+  const handleQuickLogin = async (demoEmail: string, demoPassword: string) => {
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    setSubmitting(true);
+    try {
+      await login(demoEmail, demoPassword);
+      toast.success("Welcome back! Login successful.");
+    } catch (err: any) {
+      console.error("Quick login error:", err);
+      const backendMessage = err.message || "Invalid email or password";
+      toast.error(backendMessage);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const isLoading = authLoading || submitting;
 
   return (
@@ -229,6 +253,33 @@ function LoginContent() {
         <Card className="border border-border/40 bg-surface/60 backdrop-blur-xl shadow-2xl rounded-2xl">
           <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Quick Demo Login Tabs */}
+              <div className="space-y-2 pb-2 border-b border-border/20">
+                <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block">
+                  Quick Demo Login (Tab to Auto-Login)
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    disabled={isLoading}
+                    onClick={() => handleQuickLogin("admin@gmail.com", "Admin123?")}
+                    className="flex flex-col items-center justify-center bg-surface-light/30 hover:bg-primary/10 border border-border/60 hover:border-primary/50 text-white rounded-xl p-2.5 transition-all cursor-pointer active:scale-95 disabled:opacity-50 disabled:pointer-events-none group"
+                  >
+                    <span className="text-xs font-bold text-primary group-hover:text-primary-light transition-colors">Admin Account</span>
+                    <span className="text-[10px] text-text-muted mt-0.5">admin@gmail.com</span>
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isLoading}
+                    onClick={() => handleQuickLogin("User@gmail.com", "User123?")}
+                    className="flex flex-col items-center justify-center bg-surface-light/30 hover:bg-secondary/10 border border-border/60 hover:border-secondary/50 text-white rounded-xl p-2.5 transition-all cursor-pointer active:scale-95 disabled:opacity-50 disabled:pointer-events-none group"
+                  >
+                    <span className="text-xs font-bold text-secondary group-hover:text-secondary-light transition-colors">User Account</span>
+                    <span className="text-[10px] text-text-muted mt-0.5">User@gmail.com</span>
+                  </button>
+                </div>
+              </div>
+
               {/* Email Field */}
               <TextField className="flex flex-col gap-1.5 w-full">
                 <Label className="text-white text-sm font-medium">Email Address</Label>
