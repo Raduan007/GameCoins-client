@@ -13,6 +13,7 @@ interface AuthContextType {
   logout: () => void;
   register: (name: string, email: string, password: string) => Promise<void>;
   checkAuth: () => Promise<void>;
+  loginWithGoogle: (idToken: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -110,6 +111,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const loginWithGoogle = async (idToken: string) => {
+    try {
+      setLoading(true);
+      const data = await authService.googleLogin(idToken);
+      localStorage.setItem("gamecoins_token", data.token);
+      localStorage.setItem("gamecoins_user", JSON.stringify(data.user));
+      setToken(data.token);
+      setUser(data.user);
+    } catch (error) {
+      setUser(null);
+      setToken(null);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const isAuthenticated = !!user;
 
   return (
@@ -123,6 +141,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         register,
         checkAuth,
+        loginWithGoogle,
       }}
     >
       {children}

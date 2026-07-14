@@ -1,4 +1,3 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export interface ApiError {
   success: false;
@@ -19,18 +18,22 @@ async function request<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  // Debug: confirm the API base URL is resolved at runtime
-  console.log("[API] NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  if (!API_URL) {
-    throw new Error(
-      "API URL is missing. Make sure NEXT_PUBLIC_API_URL is set in .env.local (e.g. http://localhost:5000)"
-    );
+  // Debug: confirm the API base URL is resolved at runtime
+  console.log("[API] NEXT_PUBLIC_API_URL:", apiUrl);
+
+  if (!apiUrl) {
+    if (process.env.NODE_ENV === "development") {
+      throw new Error(
+        "API URL is missing. Make sure NEXT_PUBLIC_API_URL is set in .env.local (e.g. http://localhost:5000)"
+      );
+    }
   }
 
-  const baseUrl = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
+  const baseUrl = apiUrl ? (apiUrl.endsWith('/') ? apiUrl.slice(0, -1) : apiUrl) : '';
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  const fullUrl = `${baseUrl}${cleanPath}`;
+  const fullUrl = baseUrl ? `${baseUrl}${cleanPath}` : cleanPath;
 
   // Debug: log every outgoing request URL
   console.log(`[API] ${(options.method || 'GET').toUpperCase()} ${fullUrl}`);

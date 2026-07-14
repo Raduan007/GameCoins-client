@@ -17,6 +17,9 @@ export const dashboardService = {
   async getBuyerOrders(): Promise<any[]> {
     return api.get<any[]>("/api/dashboard/orders");
   },
+  async getBuyerPayments(): Promise<any[]> {
+    return api.get<any[]>("/api/dashboard/payments");
+  },
   async getBuyerOrderById(id: string): Promise<any> {
     return api.get<any>(`/api/dashboard/orders/${id}`);
   },

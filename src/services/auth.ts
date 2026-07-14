@@ -46,4 +46,11 @@ export const authService = {
     localStorage.removeItem('gamecoins_token');
     localStorage.removeItem('gamecoins_user');
   },
+
+  /**
+   * Log in or register with Google ID Token
+   */
+  async googleLogin(idToken: string): Promise<{ token: string; user: User }> {
+    return api.post<{ token: string; user: User }>('/api/auth/google', { idToken });
+  },
 };
