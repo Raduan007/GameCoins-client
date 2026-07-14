@@ -13,9 +13,6 @@ import {
 export default function Hero() {
   return (
     <section id="hero" className="relative overflow-hidden pt-24">
-      {/* Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-secondary/5 to-background" />
-
       {/* Floating decorative orbs */}
       <motion.div
         animate={floatAnimation}
@@ -56,9 +53,7 @@ export default function Hero() {
             className="text-4xl font-extrabold leading-tight tracking-tight text-text sm:text-5xl lg:text-6xl"
           >
             Top Up Your Favorite{" "}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Games Instantly
-            </span>
+            <span className="text-primary">Games Instantly</span>
           </motion.h1>
 
           {/* Subheading */}
